@@ -1,10 +1,10 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import type { Transaction, TransactionEffect } from '@/types'
-import { LocalStorageRepository } from '@/repositories'
+import { LocalStorageTransactionRepository } from '@/repositories'
 import { generateId } from '@/utils/id'
 
-const repo = new LocalStorageRepository<Transaction>('billuyo:transactions')
+const repo = new LocalStorageTransactionRepository()
 
 export const useTransactionsStore = defineStore('transactions', () => {
   const items = ref<Transaction[]>([])

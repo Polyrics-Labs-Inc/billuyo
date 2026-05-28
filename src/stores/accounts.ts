@@ -1,10 +1,10 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import type { Account } from '@/types'
-import { LocalStorageRepository } from '@/repositories'
+import { LocalStorageAccountRepository } from '@/repositories'
 import { generateId } from '@/utils/id'
 
-const repo = new LocalStorageRepository<Account>('billuyo:accounts')
+const repo = new LocalStorageAccountRepository()
 
 export const useAccountsStore = defineStore('accounts', () => {
   const items = ref<Account[]>([])
