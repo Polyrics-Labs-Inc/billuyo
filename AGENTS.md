@@ -16,6 +16,7 @@ Vue 3 (`<script setup>`), TypeScript (strict), Pinia (composition stores), vue-r
 - **App bootstrap** (`App.vue`): loads all stores in parallel, sets locale from settings, redirects to `/onboarding` if not onboarded.
 - **Routing**: `/onboarding` (no layout), `/` nested in `AppLayout` (bottom nav shell). 20 lazy-loaded page components.
 - **Obligations**: two collections — `Obligation` (recurring template) + `ObligationAction` (per-period instance, linked to a transaction).
+- **API sync layer**: `SyncedRepository<T>` in `src/api/sync/` wraps any localStorage repo and enqueues create/update/delete to a FIFO queue persisted in `billuyo:syncQueue`. `SyncEngine` retries on failure (5 max, then dead-letter in `billuyo:syncDeadLetter`). Lazy init, no-op if `VITE_API_URL` is empty.
 
 ## Design System
 - Claymorphism: `tailwind.config.js` defines clay colors, radii, 6 shadow layers, 4 animations. See `DESIGN.md`.
@@ -32,5 +33,8 @@ Vue 3 (`<script setup>`), TypeScript (strict), Pinia (composition stores), vue-r
 - PWA with `autoUpdate` — service worker updates automatically.
 - Docker: multi-stage build (`node:23-alpine` build → `nginx:alpine` serve).
 
+## Configuration
+- `VITE_API_URL` in `.env` (or `.env.local`) — REST API base URL. Leave empty to disable API sync.
+
 ## localStorage Keys
-`billuyo:categories`, `billuyo:accounts`, `billuyo:transactions`, `billuyo:budgets`, `billuyo:obligations`, `billuyo:obligationActions`, `billuyo:settings`.
+`billuyo:categories`, `billuyo:accounts`, `billuyo:transactions`, `billuyo:budgets`, `billuyo:obligations`, `billuyo:obligationActions`, `billuyo:settings`, `billuyo:syncQueue`, `billuyo:syncDeadLetter`.
