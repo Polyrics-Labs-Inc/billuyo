@@ -10,7 +10,7 @@ const repo = new LocalStorageCategoryRepository()
 function getDefaultCategories(): Category[] {
   const make = (key: string, icon: string, direction: 'credit' | 'debit', color: string, order: number): Category => {
     const name = i18n.global.t(key)
-    return { id: generateId(), name: name !== key ? name : key.split('.').pop() || key, nameKey: key, icon, defaultDirection: direction, color, order }
+    return { id: generateId(), name: name !== key ? name : key.split('.').pop() || key, nameKey: key, icon, defaultDirection: direction, color, order, updatedAt: new Date().toISOString() }
   }
   return [
     make('categories.default.salary', 'Wallet', 'credit', '#10B981', 0),
@@ -40,16 +40,17 @@ export const useCategoriesStore = defineStore('categories', () => {
     }
   }
 
-  async function create(data: Omit<Category, 'id'>) {
-    const item: Category = { ...data, id: generateId() }
+  async function create(data: Omit<Category, 'id' | 'updatedAt'>) {
+    const item: Category = { ...data, id: generateId(), updatedAt: new Date().toISOString() }
     items.value.push(item)
     await repo.create(item)
     return item
   }
 
   async function update(id: string, data: Partial<Category>) {
-    items.value = items.value.map(i => i.id === id ? { ...i, ...data } : i)
-    await repo.update(id, { ...data, id } as Category)
+    const now = new Date().toISOString()
+    items.value = items.value.map(i => i.id === id ? { ...i, ...data, updatedAt: now } : i)
+    await repo.update(id, { ...data, id, updatedAt: now } as Category)
   }
 
   async function setAllData(data: Category[]) {

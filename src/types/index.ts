@@ -20,6 +20,7 @@ export interface Category {
   defaultDirection: Direction
   color: string
   order: number
+  updatedAt: string
 }
 
 export interface Account {
@@ -33,6 +34,7 @@ export interface Account {
   isDefaultSavings: boolean
   isDefaultExpenses: boolean
   createdAt: string
+  updatedAt: string
 }
 
 export interface TransactionEffect {
@@ -54,6 +56,7 @@ export interface Transaction {
   effects: TransactionEffect[]
   obligationActionId?: string
   createdAt: string
+  updatedAt: string
 }
 
 export interface Budget {
@@ -64,6 +67,7 @@ export interface Budget {
   endDate?: string
   color: string
   icon: string
+  updatedAt: string
 }
 
 export interface Obligation {
@@ -77,6 +81,7 @@ export interface Obligation {
   categoryId: string
   budgetId?: string
   color: string
+  updatedAt: string
 }
 
 export interface ObligationAction {
@@ -89,6 +94,7 @@ export interface ObligationAction {
   periodEnd: string
   completed: boolean
   transactionId?: string
+  updatedAt: string
 }
 
 export interface AppSettings {

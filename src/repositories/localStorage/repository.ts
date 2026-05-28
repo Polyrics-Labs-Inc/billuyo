@@ -1,4 +1,4 @@
-import type { Repository } from './interfaces'
+import type { Repository } from '../interfaces'
 
 export class LocalStorageRepository<T extends { id: string }> implements Repository<T> {
   constructor(private storageKey: string) {}

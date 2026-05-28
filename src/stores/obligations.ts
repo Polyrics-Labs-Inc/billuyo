@@ -17,16 +17,17 @@ export const useObligationsStore = defineStore('obligations', () => {
     actions.value = await actionRepo.getAll()
   }
 
-  async function createObligation(data: Omit<Obligation, 'id'>) {
-    const item: Obligation = { ...data, id: generateId() }
+  async function createObligation(data: Omit<Obligation, 'id' | 'updatedAt'>) {
+    const item: Obligation = { ...data, id: generateId(), updatedAt: new Date().toISOString() }
     obligations.value.push(item)
     await obligationRepo.create(item)
     return item
   }
 
   async function updateObligation(id: string, data: Partial<Obligation>) {
-    obligations.value = obligations.value.map(i => i.id === id ? { ...i, ...data } : i)
-    await obligationRepo.update(id, { ...data, id } as Obligation)
+    const now = new Date().toISOString()
+    obligations.value = obligations.value.map(i => i.id === id ? { ...i, ...data, updatedAt: now } : i)
+    await obligationRepo.update(id, { ...data, id, updatedAt: now } as Obligation)
   }
 
   async function removeObligation(id: string) {
@@ -40,16 +41,17 @@ export const useObligationsStore = defineStore('obligations', () => {
     return obligations.value.find(i => i.id === id)
   }
 
-  async function createAction(data: Omit<ObligationAction, 'id'>) {
-    const item: ObligationAction = { ...data, id: generateId() }
+  async function createAction(data: Omit<ObligationAction, 'id' | 'updatedAt'>) {
+    const item: ObligationAction = { ...data, id: generateId(), updatedAt: new Date().toISOString() }
     actions.value.push(item)
     await actionRepo.create(item)
     return item
   }
 
   async function updateAction(id: string, data: Partial<ObligationAction>) {
-    actions.value = actions.value.map(a => a.id === id ? { ...a, ...data } : a)
-    await actionRepo.update(id, { ...data, id } as ObligationAction)
+    const now = new Date().toISOString()
+    actions.value = actions.value.map(a => a.id === id ? { ...a, ...data, updatedAt: now } : a)
+    await actionRepo.update(id, { ...data, id, updatedAt: now } as ObligationAction)
   }
 
   async function removeAction(id: string) {

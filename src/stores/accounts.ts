@@ -13,16 +13,18 @@ export const useAccountsStore = defineStore('accounts', () => {
     items.value = await repo.getAll()
   }
 
-  async function create(data: Omit<Account, 'id' | 'createdAt'>) {
-    const item: Account = { ...data, id: generateId(), createdAt: new Date().toISOString() }
+  async function create(data: Omit<Account, 'id' | 'createdAt' | 'updatedAt'>) {
+    const now = new Date().toISOString()
+    const item: Account = { ...data, id: generateId(), createdAt: now, updatedAt: now }
     items.value.push(item)
     await repo.create(item)
     return item
   }
 
   async function update(id: string, data: Partial<Account>) {
-    items.value = items.value.map(i => i.id === id ? { ...i, ...data } : i)
-    await repo.update(id, { ...data, id } as Account)
+    const now = new Date().toISOString()
+    items.value = items.value.map(i => i.id === id ? { ...i, ...data, updatedAt: now } : i)
+    await repo.update(id, { ...data, id, updatedAt: now } as Account)
   }
 
   async function setAllData(data: Account[]) {

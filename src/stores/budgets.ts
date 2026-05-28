@@ -13,16 +13,17 @@ export const useBudgetsStore = defineStore('budgets', () => {
     items.value = await repo.getAll()
   }
 
-  async function create(data: Omit<Budget, 'id'>) {
-    const item: Budget = { ...data, id: generateId() }
+  async function create(data: Omit<Budget, 'id' | 'updatedAt'>) {
+    const item: Budget = { ...data, id: generateId(), updatedAt: new Date().toISOString() }
     items.value.push(item)
     await repo.create(item)
     return item
   }
 
   async function update(id: string, data: Partial<Budget>) {
-    items.value = items.value.map(i => i.id === id ? { ...i, ...data } : i)
-    await repo.update(id, { ...data, id } as Budget)
+    const now = new Date().toISOString()
+    items.value = items.value.map(i => i.id === id ? { ...i, ...data, updatedAt: now } : i)
+    await repo.update(id, { ...data, id, updatedAt: now } as Budget)
   }
 
   async function setAllData(data: Budget[]) {

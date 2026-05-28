@@ -12,7 +12,7 @@ Vue 3 (`<script setup>`), TypeScript (strict), Pinia (composition stores), vue-r
 
 ## Architecture
 - **100% client-side**, no backend. All data in `localStorage` under `billuyo:` keys.
-- **Repository pattern**: `Repository<T>` interface → per-entity interfaces (`ICategoryRepository`, `IAccountRepository`, etc.) → `LocalStorageRepository<T>` base → per-entity localStorage impls (`LocalStorageCategoryRepository`, etc.). One domain file per entity in `src/repositories/`. Each store uses its typed repo class.
+- **Repository pattern**: `Repository<T>` interface → per-entity interfaces (`ICategoryRepository`, `IAccountRepository`, etc.) → `LocalStorageRepository<T>` base → per-entity localStorage impls (`LocalStorageCategoryRepository`, etc.). One domain file per entity in `src/repositories/`. Each store uses its typed repo class. All localStorage implementations live in `src/repositories/localStorage/`.
 - **App bootstrap** (`App.vue`): loads all stores in parallel, sets locale from settings, redirects to `/onboarding` if not onboarded.
 - **Routing**: `/onboarding` (no layout), `/` nested in `AppLayout` (bottom nav shell). 20 lazy-loaded page components.
 - **Obligations**: two collections — `Obligation` (recurring template) + `ObligationAction` (per-period instance, linked to a transaction).

@@ -28,6 +28,7 @@ export const useTransactionsStore = defineStore('transactions', () => {
       id: generateId(),
       transactionId,
     }))
+    const now = new Date().toISOString()
     const item: Transaction = {
       id: transactionId,
       amount: data.amount,
@@ -37,7 +38,8 @@ export const useTransactionsStore = defineStore('transactions', () => {
       description: data.description,
       effects,
       obligationActionId: data.obligationActionId,
-      createdAt: new Date().toISOString(),
+      createdAt: now,
+      updatedAt: now,
     }
     items.value.push(item)
     await repo.create(item)
@@ -45,6 +47,7 @@ export const useTransactionsStore = defineStore('transactions', () => {
   }
 
   async function update(id: string, data: Partial<Transaction>) {
+    const now = new Date().toISOString()
     if (data.effects) {
       data.effects = data.effects.map(e => ({
         ...e,
@@ -52,8 +55,8 @@ export const useTransactionsStore = defineStore('transactions', () => {
         transactionId: id,
       }))
     }
-    items.value = items.value.map(i => i.id === id ? { ...i, ...data } : i)
-    await repo.update(id, { ...data, id } as Transaction)
+    items.value = items.value.map(i => i.id === id ? { ...i, ...data, updatedAt: now } : i)
+    await repo.update(id, { ...data, id, updatedAt: now } as Transaction)
   }
 
   async function setAllData(data: Transaction[]) {
