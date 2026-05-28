@@ -98,6 +98,7 @@ export interface ObligationAction {
 }
 
 export interface AppSettings {
+  userId: string
   language: Language
   defaultCurrency: string
   onboarded: boolean
@@ -106,6 +107,7 @@ export interface AppSettings {
 export interface AppData {
   version: string
   exportedAt: string
+  userId: string
   settings: AppSettings
   categories: Category[]
   accounts: Account[]

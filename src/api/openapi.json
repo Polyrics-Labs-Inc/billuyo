@@ -1,0 +1,1108 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "BilluYo API",
+    "version": "0.1.0",
+    "description": "REST API for BilluYo personal finance tracker"
+  },
+  "servers": [
+    {
+      "url": "https://billuyoapi.local",
+      "description": "Local development"
+    }
+  ],
+  "paths": {
+    "/api/health": {
+      "get": {
+        "summary": "Health check",
+        "tags": ["System"],
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Service is healthy",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string", "example": "ok" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/settings": {
+      "get": {
+        "summary": "Get current user settings",
+        "tags": ["Settings"],
+        "responses": {
+          "200": {
+            "description": "User settings",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AppSettings" }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Update user settings",
+        "tags": ["Settings"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/AppSettings" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Settings updated",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AppSettings" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/data": {
+      "get": {
+        "summary": "Export all user data",
+        "tags": ["Data"],
+        "responses": {
+          "200": {
+            "description": "Full data export",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AppData" }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Import all user data (full replacement)",
+        "tags": ["Data"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/AppData" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Data imported successfully"
+          }
+        }
+      }
+    },
+    "/api/categories": {
+      "get": {
+        "summary": "List all categories",
+        "tags": ["Categories"],
+        "responses": {
+          "200": {
+            "description": "Array of categories",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Category" }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new category",
+        "tags": ["Categories"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CategoryNew" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Category created",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Category" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/categories/{id}": {
+      "get": {
+        "summary": "Get a category by ID",
+        "tags": ["Categories"],
+        "parameters": [
+          { "$ref": "#/components/parameters/EntityId" }
+        ],
+        "responses": {
+          "200": {
+            "description": "Category found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Category" }
+              }
+            }
+          },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      },
+      "put": {
+        "summary": "Update a category",
+        "tags": ["Categories"],
+        "parameters": [
+          { "$ref": "#/components/parameters/EntityId" }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CategoryUpdate" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Category updated",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Category" }
+              }
+            }
+          },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      },
+      "delete": {
+        "summary": "Delete a category",
+        "tags": ["Categories"],
+        "parameters": [
+          { "$ref": "#/components/parameters/EntityId" }
+        ],
+        "responses": {
+          "204": { "description": "Category deleted" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+    },
+    "/api/accounts": {
+      "get": {
+        "summary": "List all accounts",
+        "tags": ["Accounts"],
+        "responses": {
+          "200": {
+            "description": "Array of accounts",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Account" }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new account",
+        "tags": ["Accounts"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/AccountNew" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Account created",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Account" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/accounts/{id}": {
+      "get": {
+        "summary": "Get an account by ID",
+        "tags": ["Accounts"],
+        "parameters": [
+          { "$ref": "#/components/parameters/EntityId" }
+        ],
+        "responses": {
+          "200": {
+            "description": "Account found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Account" }
+              }
+            }
+          },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      },
+      "put": {
+        "summary": "Update an account",
+        "tags": ["Accounts"],
+        "parameters": [
+          { "$ref": "#/components/parameters/EntityId" }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/AccountUpdate" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Account updated",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Account" }
+              }
+            }
+          },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      },
+      "delete": {
+        "summary": "Delete an account",
+        "tags": ["Accounts"],
+        "parameters": [
+          { "$ref": "#/components/parameters/EntityId" }
+        ],
+        "responses": {
+          "204": { "description": "Account deleted" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+    },
+    "/api/transactions": {
+      "get": {
+        "summary": "List all transactions",
+        "tags": ["Transactions"],
+        "parameters": [
+          {
+            "name": "from",
+            "in": "query",
+            "schema": { "type": "string", "format": "date" },
+            "description": "Filter by start date (inclusive)"
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "schema": { "type": "string", "format": "date" },
+            "description": "Filter by end date (inclusive)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Array of transactions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Transaction" }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new transaction",
+        "tags": ["Transactions"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/TransactionNew" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Transaction created",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Transaction" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/transactions/{id}": {
+      "get": {
+        "summary": "Get a transaction by ID",
+        "tags": ["Transactions"],
+        "parameters": [
+          { "$ref": "#/components/parameters/EntityId" }
+        ],
+        "responses": {
+          "200": {
+            "description": "Transaction found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Transaction" }
+              }
+            }
+          },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      },
+      "put": {
+        "summary": "Update a transaction",
+        "tags": ["Transactions"],
+        "parameters": [
+          { "$ref": "#/components/parameters/EntityId" }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/TransactionUpdate" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Transaction updated",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Transaction" }
+              }
+            }
+          },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      },
+      "delete": {
+        "summary": "Delete a transaction",
+        "tags": ["Transactions"],
+        "parameters": [
+          { "$ref": "#/components/parameters/EntityId" }
+        ],
+        "responses": {
+          "204": { "description": "Transaction deleted" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+    },
+    "/api/budgets": {
+      "get": {
+        "summary": "List all budgets",
+        "tags": ["Budgets"],
+        "responses": {
+          "200": {
+            "description": "Array of budgets",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Budget" }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new budget",
+        "tags": ["Budgets"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/BudgetNew" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Budget created",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Budget" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/budgets/{id}": {
+      "get": {
+        "summary": "Get a budget by ID",
+        "tags": ["Budgets"],
+        "parameters": [
+          { "$ref": "#/components/parameters/EntityId" }
+        ],
+        "responses": {
+          "200": {
+            "description": "Budget found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Budget" }
+              }
+            }
+          },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      },
+      "put": {
+        "summary": "Update a budget",
+        "tags": ["Budgets"],
+        "parameters": [
+          { "$ref": "#/components/parameters/EntityId" }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/BudgetUpdate" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Budget updated",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Budget" }
+              }
+            }
+          },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      },
+      "delete": {
+        "summary": "Delete a budget",
+        "tags": ["Budgets"],
+        "parameters": [
+          { "$ref": "#/components/parameters/EntityId" }
+        ],
+        "responses": {
+          "204": { "description": "Budget deleted" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+    },
+    "/api/obligations": {
+      "get": {
+        "summary": "List all obligations",
+        "tags": ["Obligations"],
+        "parameters": [
+          {
+            "name": "budgetId",
+            "in": "query",
+            "schema": { "type": "string" },
+            "description": "Filter by budget ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Array of obligations",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Obligation" }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new obligation",
+        "tags": ["Obligations"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ObligationNew" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Obligation created",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Obligation" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/obligations/{id}": {
+      "get": {
+        "summary": "Get an obligation by ID",
+        "tags": ["Obligations"],
+        "parameters": [
+          { "$ref": "#/components/parameters/EntityId" }
+        ],
+        "responses": {
+          "200": {
+            "description": "Obligation found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Obligation" }
+              }
+            }
+          },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      },
+      "put": {
+        "summary": "Update an obligation",
+        "tags": ["Obligations"],
+        "parameters": [
+          { "$ref": "#/components/parameters/EntityId" }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ObligationUpdate" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Obligation updated",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Obligation" }
+              }
+            }
+          },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      },
+      "delete": {
+        "summary": "Delete an obligation",
+        "tags": ["Obligations"],
+        "parameters": [
+          { "$ref": "#/components/parameters/EntityId" }
+        ],
+        "responses": {
+          "204": { "description": "Obligation deleted" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+    },
+    "/api/obligation-actions": {
+      "get": {
+        "summary": "List all obligation actions",
+        "tags": ["Obligation Actions"],
+        "parameters": [
+          {
+            "name": "periodStart",
+            "in": "query",
+            "schema": { "type": "string", "format": "date-time" },
+            "description": "Filter by period start"
+          },
+          {
+            "name": "periodEnd",
+            "in": "query",
+            "schema": { "type": "string", "format": "date-time" },
+            "description": "Filter by period end"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Array of obligation actions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/ObligationAction" }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new obligation action",
+        "tags": ["Obligation Actions"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ObligationActionNew" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Obligation action created",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ObligationAction" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/obligation-actions/{id}": {
+      "get": {
+        "summary": "Get an obligation action by ID",
+        "tags": ["Obligation Actions"],
+        "parameters": [
+          { "$ref": "#/components/parameters/EntityId" }
+        ],
+        "responses": {
+          "200": {
+            "description": "Obligation action found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ObligationAction" }
+              }
+            }
+          },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      },
+      "put": {
+        "summary": "Update an obligation action",
+        "tags": ["Obligation Actions"],
+        "parameters": [
+          { "$ref": "#/components/parameters/EntityId" }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ObligationActionUpdate" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Obligation action updated",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ObligationAction" }
+              }
+            }
+          },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      },
+      "delete": {
+        "summary": "Delete an obligation action",
+        "tags": ["Obligation Actions"],
+        "parameters": [
+          { "$ref": "#/components/parameters/EntityId" }
+        ],
+        "responses": {
+          "204": { "description": "Obligation action deleted" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "UserKey": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-User-Id",
+        "description": "Unique user identifier (UUID) assigned at onboarding, included in all API requests"
+      }
+    },
+    "parameters": {
+      "EntityId": {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": { "type": "string" },
+        "description": "Entity ID"
+      }
+    },
+    "responses": {
+      "NotFound": {
+        "description": "Resource not found",
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/Error" }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "Error": {
+        "type": "object",
+        "required": ["error"],
+        "properties": {
+          "error": { "type": "string" },
+          "details": { "type": "string" }
+        }
+      },
+      "Frequency": {
+        "type": "object",
+        "required": ["value", "unit", "startDate"],
+        "properties": {
+          "value": { "type": "integer", "description": "Every N units" },
+          "unit": { "type": "string", "enum": ["D", "W", "M", "Y"], "description": "Day, Week, Month, Year" },
+          "startDate": { "type": "string", "format": "date", "description": "Start date of the frequency" }
+        }
+      },
+      "Category": {
+        "type": "object",
+        "required": ["id", "name", "icon", "defaultDirection", "color", "order", "updatedAt"],
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "nameKey": { "type": "string", "description": "i18n key for dynamic translation" },
+          "icon": { "type": "string", "description": "Lucide icon name" },
+          "defaultDirection": { "type": "string", "enum": ["credit", "debit"] },
+          "color": { "type": "string", "description": "Hex color" },
+          "order": { "type": "integer" },
+          "updatedAt": { "type": "string", "format": "date-time" }
+        }
+      },
+      "CategoryNew": {
+        "type": "object",
+        "required": ["name", "icon", "defaultDirection", "color", "order"],
+        "properties": {
+          "name": { "type": "string" },
+          "nameKey": { "type": "string" },
+          "icon": { "type": "string" },
+          "defaultDirection": { "type": "string", "enum": ["credit", "debit"] },
+          "color": { "type": "string" },
+          "order": { "type": "integer" }
+        }
+      },
+      "CategoryUpdate": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "nameKey": { "type": "string" },
+          "icon": { "type": "string" },
+          "defaultDirection": { "type": "string", "enum": ["credit", "debit"] },
+          "color": { "type": "string" },
+          "order": { "type": "integer" }
+        }
+      },
+      "Account": {
+        "type": "object",
+        "required": ["id", "name", "description", "currency", "color", "icon", "initialBalance", "isDefaultSavings", "isDefaultExpenses", "createdAt", "updatedAt"],
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "currency": { "type": "string", "description": "ISO 4217 currency code" },
+          "color": { "type": "string" },
+          "icon": { "type": "string" },
+          "initialBalance": { "type": "number" },
+          "isDefaultSavings": { "type": "boolean" },
+          "isDefaultExpenses": { "type": "boolean" },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "updatedAt": { "type": "string", "format": "date-time" }
+        }
+      },
+      "AccountNew": {
+        "type": "object",
+        "required": ["name", "description", "currency", "color", "icon", "initialBalance", "isDefaultSavings", "isDefaultExpenses"],
+        "properties": {
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "currency": { "type": "string" },
+          "color": { "type": "string" },
+          "icon": { "type": "string" },
+          "initialBalance": { "type": "number" },
+          "isDefaultSavings": { "type": "boolean" },
+          "isDefaultExpenses": { "type": "boolean" }
+        }
+      },
+      "AccountUpdate": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "currency": { "type": "string" },
+          "color": { "type": "string" },
+          "icon": { "type": "string" },
+          "initialBalance": { "type": "number" },
+          "isDefaultSavings": { "type": "boolean" },
+          "isDefaultExpenses": { "type": "boolean" }
+        }
+      },
+      "TransactionEffect": {
+        "type": "object",
+        "required": ["id", "transactionId", "accountId", "direction", "amount", "categoryId"],
+        "properties": {
+          "id": { "type": "string" },
+          "transactionId": { "type": "string" },
+          "accountId": { "type": "string" },
+          "direction": { "type": "string", "enum": ["credit", "debit"] },
+          "amount": { "type": "number" },
+          "categoryId": { "type": "string" }
+        }
+      },
+      "TransactionEffectNew": {
+        "type": "object",
+        "required": ["accountId", "direction", "amount", "categoryId"],
+        "properties": {
+          "accountId": { "type": "string" },
+          "direction": { "type": "string", "enum": ["credit", "debit"] },
+          "amount": { "type": "number" },
+          "categoryId": { "type": "string" }
+        }
+      },
+      "Transaction": {
+        "type": "object",
+        "required": ["id", "amount", "currency", "date", "time", "description", "effects", "createdAt", "updatedAt"],
+        "properties": {
+          "id": { "type": "string" },
+          "amount": { "type": "number" },
+          "currency": { "type": "string" },
+          "date": { "type": "string", "format": "date" },
+          "time": { "type": "string" },
+          "description": { "type": "string" },
+          "effects": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/TransactionEffect" }
+          },
+          "obligationActionId": { "type": "string" },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "updatedAt": { "type": "string", "format": "date-time" }
+        }
+      },
+      "TransactionNew": {
+        "type": "object",
+        "required": ["amount", "currency", "date", "time", "description", "effects"],
+        "properties": {
+          "amount": { "type": "number" },
+          "currency": { "type": "string" },
+          "date": { "type": "string", "format": "date" },
+          "time": { "type": "string" },
+          "description": { "type": "string" },
+          "effects": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/TransactionEffectNew" }
+          },
+          "obligationActionId": { "type": "string" }
+        }
+      },
+      "TransactionUpdate": {
+        "type": "object",
+        "properties": {
+          "amount": { "type": "number" },
+          "currency": { "type": "string" },
+          "date": { "type": "string", "format": "date" },
+          "time": { "type": "string" },
+          "description": { "type": "string" },
+          "effects": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/TransactionEffectNew" }
+          },
+          "obligationActionId": { "type": "string" }
+        }
+      },
+      "Budget": {
+        "type": "object",
+        "required": ["id", "name", "description", "frequency", "color", "icon", "updatedAt"],
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "frequency": { "$ref": "#/components/schemas/Frequency" },
+          "endDate": { "type": "string", "format": "date" },
+          "color": { "type": "string" },
+          "icon": { "type": "string" },
+          "updatedAt": { "type": "string", "format": "date-time" }
+        }
+      },
+      "BudgetNew": {
+        "type": "object",
+        "required": ["name", "description", "frequency", "color", "icon"],
+        "properties": {
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "frequency": { "$ref": "#/components/schemas/Frequency" },
+          "endDate": { "type": "string", "format": "date" },
+          "color": { "type": "string" },
+          "icon": { "type": "string" }
+        }
+      },
+      "BudgetUpdate": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "frequency": { "$ref": "#/components/schemas/Frequency" },
+          "endDate": { "type": "string", "format": "date" },
+          "color": { "type": "string" },
+          "icon": { "type": "string" }
+        }
+      },
+      "Obligation": {
+        "type": "object",
+        "required": ["id", "name", "type", "expectedValue", "currency", "frequency", "accountId", "categoryId", "color", "updatedAt"],
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "type": { "type": "string", "enum": ["income", "savings", "expense"] },
+          "expectedValue": { "type": "number" },
+          "currency": { "type": "string" },
+          "frequency": { "$ref": "#/components/schemas/Frequency" },
+          "accountId": { "type": "string" },
+          "categoryId": { "type": "string" },
+          "budgetId": { "type": "string" },
+          "color": { "type": "string" },
+          "updatedAt": { "type": "string", "format": "date-time" }
+        }
+      },
+      "ObligationNew": {
+        "type": "object",
+        "required": ["name", "type", "expectedValue", "currency", "frequency", "accountId", "categoryId", "color"],
+        "properties": {
+          "name": { "type": "string" },
+          "type": { "type": "string", "enum": ["income", "savings", "expense"] },
+          "expectedValue": { "type": "number" },
+          "currency": { "type": "string" },
+          "frequency": { "$ref": "#/components/schemas/Frequency" },
+          "accountId": { "type": "string" },
+          "categoryId": { "type": "string" },
+          "budgetId": { "type": "string" },
+          "color": { "type": "string" }
+        }
+      },
+      "ObligationUpdate": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "type": { "type": "string", "enum": ["income", "savings", "expense"] },
+          "expectedValue": { "type": "number" },
+          "currency": { "type": "string" },
+          "frequency": { "$ref": "#/components/schemas/Frequency" },
+          "accountId": { "type": "string" },
+          "categoryId": { "type": "string" },
+          "budgetId": { "type": "string" },
+          "color": { "type": "string" }
+        }
+      },
+      "ObligationAction": {
+        "type": "object",
+        "required": ["id", "obligationId", "actualAmount", "date", "time", "periodStart", "periodEnd", "completed", "updatedAt"],
+        "properties": {
+          "id": { "type": "string" },
+          "obligationId": { "type": "string" },
+          "actualAmount": { "type": "number" },
+          "date": { "type": "string", "format": "date" },
+          "time": { "type": "string" },
+          "periodStart": { "type": "string", "format": "date-time" },
+          "periodEnd": { "type": "string", "format": "date-time" },
+          "completed": { "type": "boolean" },
+          "transactionId": { "type": "string" },
+          "updatedAt": { "type": "string", "format": "date-time" }
+        }
+      },
+      "ObligationActionNew": {
+        "type": "object",
+        "required": ["obligationId", "actualAmount", "date", "time", "periodStart", "periodEnd", "completed"],
+        "properties": {
+          "obligationId": { "type": "string" },
+          "actualAmount": { "type": "number" },
+          "date": { "type": "string", "format": "date" },
+          "time": { "type": "string" },
+          "periodStart": { "type": "string", "format": "date-time" },
+          "periodEnd": { "type": "string", "format": "date-time" },
+          "completed": { "type": "boolean" },
+          "transactionId": { "type": "string" }
+        }
+      },
+      "ObligationActionUpdate": {
+        "type": "object",
+        "properties": {
+          "actualAmount": { "type": "number" },
+          "date": { "type": "string", "format": "date" },
+          "time": { "type": "string" },
+          "periodStart": { "type": "string", "format": "date-time" },
+          "periodEnd": { "type": "string", "format": "date-time" },
+          "completed": { "type": "boolean" },
+          "transactionId": { "type": "string" }
+        }
+      },
+      "AppSettings": {
+        "type": "object",
+        "required": ["userId", "language", "defaultCurrency", "onboarded"],
+        "properties": {
+          "userId": { "type": "string", "description": "Unique user identifier (UUID), generated on first session" },
+          "language": { "type": "string", "enum": ["en", "es"] },
+          "defaultCurrency": { "type": "string" },
+          "onboarded": { "type": "boolean" }
+        }
+      },
+      "AppData": {
+        "type": "object",
+        "required": ["version", "exportedAt", "userId", "settings", "categories", "accounts", "transactions", "budgets", "obligations", "obligationActions"],
+        "properties": {
+          "version": { "type": "string", "description": "Data schema version" },
+          "exportedAt": { "type": "string", "format": "date-time" },
+          "userId": { "type": "string" },
+          "settings": { "$ref": "#/components/schemas/AppSettings" },
+          "categories": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Category" }
+          },
+          "accounts": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Account" }
+          },
+          "transactions": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Transaction" }
+          },
+          "budgets": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Budget" }
+          },
+          "obligations": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Obligation" }
+          },
+          "obligationActions": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/ObligationAction" }
+          }
+        }
+      }
+    }
+  },
+  "security": [
+    {
+      "UserKey": []
+    }
+  ]
+}

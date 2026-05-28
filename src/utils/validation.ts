@@ -1,4 +1,5 @@
 import type { AppData, Obligation, ObligationAction, AppSettings } from '@/types'
+import { generateId } from '@/utils/id'
 
 const CURRENT_VERSION = '0.1.0'
 
@@ -78,19 +79,23 @@ export function validateAppData(raw: unknown): ValidationResult {
     return { valid: false, errors, warnings, data: null }
   }
 
-  try {
-    const data = raw as unknown as AppData
-    return { valid: true, errors, warnings, data }
-  } catch {
-    return { valid: false, errors: ['Failed to parse data'], warnings, data: null }
+  const data = raw as unknown as AppData
+
+  if (data.settings && !data.settings.userId) {
+    data.settings.userId = generateId()
+    warnings.push('No userId found in imported data — generated a new one')
   }
+
+  return { valid: true, errors, warnings, data }
 }
 
 export function createEmptyAppData(settings?: Partial<AppSettings>): AppData {
   return {
     version: CURRENT_VERSION,
     exportedAt: new Date().toISOString(),
+    userId: generateId(),
     settings: {
+      userId: generateId(),
       language: 'en',
       defaultCurrency: 'USD',
       onboarded: false,

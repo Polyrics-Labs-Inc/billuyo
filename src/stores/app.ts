@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import type { AppSettings, Language } from '@/types'
+import { generateId } from '@/utils/id'
 
 const STORAGE_KEY = 'billuyo:settings'
 
@@ -10,9 +11,16 @@ export const useAppStore = defineStore('app', () => {
   function loadSettings(): AppSettings {
     try {
       const raw = localStorage.getItem(STORAGE_KEY)
-      if (raw) return JSON.parse(raw)
+      if (raw) {
+        const parsed = JSON.parse(raw) as AppSettings
+        if (!parsed.userId) {
+          parsed.userId = generateId()
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(parsed))
+        }
+        return parsed
+      }
     } catch { /* ignore */ }
-    return { language: 'en', defaultCurrency: 'USD', onboarded: false }
+    return { userId: generateId(), language: 'en', defaultCurrency: 'USD', onboarded: false }
   }
 
   function persist() {
@@ -36,6 +44,7 @@ export const useAppStore = defineStore('app', () => {
 
   function resetSettings(data?: Partial<AppSettings>) {
     settings.value = {
+      userId: settings.value.userId || generateId(),
       language: 'en',
       defaultCurrency: 'USD',
       onboarded: false,

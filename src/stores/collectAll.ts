@@ -16,6 +16,7 @@ export function collectAllData(): AppData {
   return {
     version: '0.1.0',
     exportedAt: new Date().toISOString(),
+    userId: app.settings.userId,
     settings: { ...app.settings },
     categories: cat.items,
     accounts: acc.items,
