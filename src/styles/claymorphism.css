@@ -1,0 +1,77 @@
+/* Claymorphism extra utilities */
+
+@layer components {
+  .clay-card {
+    @apply rounded-clay bg-clay-surface shadow-clay-card border border-clay-border/30;
+  }
+
+  .clay-card-hover {
+    @apply clay-card hover:shadow-clay-card-hover hover:-translate-y-1 transition-all duration-300;
+  }
+
+  .clay-button {
+    @apply rounded-clay-sm shadow-clay-button active:shadow-clay-pressed active:scale-[0.96] transition-all duration-150 cursor-pointer select-none;
+  }
+
+  .clay-button-primary {
+    @apply clay-button bg-clay-primary text-white hover:bg-clay-primary-hover;
+  }
+
+  .clay-button-secondary {
+    @apply clay-button bg-clay-primary-light text-clay-primary hover:bg-violet-100;
+  }
+
+  .clay-button-danger {
+    @apply clay-button bg-red-50 text-clay-expense hover:bg-red-100;
+  }
+
+  .clay-button-ghost {
+    @apply rounded-clay-sm hover:bg-clay-primary-light/50 active:scale-[0.97] transition-all duration-150;
+  }
+
+  .clay-input {
+    @apply w-full rounded-clay-sm px-4 py-3 bg-clay-bg border border-clay-border/50 shadow-clay-inset 
+           focus:outline-none focus:ring-2 focus:ring-clay-primary/30 focus:border-clay-primary/50 
+           transition-all duration-200 placeholder:text-clay-muted/60;
+  }
+
+  .clay-select {
+    @apply clay-input appearance-none cursor-pointer;
+  }
+
+  .clay-badge {
+    @apply inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium;
+  }
+
+  .clay-modal-overlay {
+    @apply fixed inset-0 bg-black/30 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center;
+  }
+
+  .clay-modal {
+    @apply w-full sm:max-w-lg bg-clay-surface rounded-t-clay-lg sm:rounded-clay-lg shadow-clay-float 
+           p-6 animate-slide-up max-h-[85vh] overflow-y-auto;
+  }
+
+  .clay-empty {
+    @apply flex flex-col items-center justify-center py-16 text-center;
+  }
+
+  .clay-nav-link {
+    @apply flex flex-col items-center gap-0.5 px-3 py-2 rounded-clay-sm transition-all duration-200
+           text-clay-muted hover:text-clay-primary;
+  }
+
+  .clay-nav-link-active {
+    @apply text-clay-primary bg-clay-primary-light;
+  }
+}
+
+/* Floating background blobs */
+.clay-blob {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.12;
+  pointer-events: none;
+  z-index: -1;
+}
