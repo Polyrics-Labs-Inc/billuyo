@@ -1,0 +1,6 @@
+export { SyncEngine } from './engine'
+export { SyncQueue } from './queue'
+export { SyncedRepository } from './repository'
+export { syncEngine } from './instance'
+export type { SyncEntry, EntityName, SyncOperation } from './types'
+export { MAX_RETRIES } from './types'

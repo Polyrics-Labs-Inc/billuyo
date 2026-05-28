@@ -2,9 +2,10 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import type { Budget } from '@/types'
 import { LocalStorageBudgetRepository } from '@/repositories'
+import { SyncedRepository, syncEngine } from '@/api/sync'
 import { generateId } from '@/utils/id'
 
-const repo = new LocalStorageBudgetRepository()
+const repo = new SyncedRepository(new LocalStorageBudgetRepository(), 'budget', syncEngine)
 
 export const useBudgetsStore = defineStore('budgets', () => {
   const items = ref<Budget[]>([])

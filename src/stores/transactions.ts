@@ -2,9 +2,10 @@ import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import type { Transaction, TransactionEffect } from '@/types'
 import { LocalStorageTransactionRepository } from '@/repositories'
+import { SyncedRepository, syncEngine } from '@/api/sync'
 import { generateId } from '@/utils/id'
 
-const repo = new LocalStorageTransactionRepository()
+const repo = new SyncedRepository(new LocalStorageTransactionRepository(), 'transaction', syncEngine)
 
 export const useTransactionsStore = defineStore('transactions', () => {
   const items = ref<Transaction[]>([])

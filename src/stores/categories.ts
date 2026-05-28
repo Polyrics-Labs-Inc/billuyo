@@ -2,10 +2,11 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import type { Category } from '@/types'
 import { LocalStorageCategoryRepository } from '@/repositories'
+import { SyncedRepository, syncEngine } from '@/api/sync'
 import { generateId } from '@/utils/id'
 import { i18n } from '@/i18n'
 
-const repo = new LocalStorageCategoryRepository()
+const repo = new SyncedRepository(new LocalStorageCategoryRepository(), 'category', syncEngine)
 
 function getDefaultCategories(): Category[] {
   const make = (key: string, icon: string, direction: 'credit' | 'debit', color: string, order: number): Category => {

@@ -2,11 +2,12 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import type { Obligation, ObligationAction, PeriodInfo } from '@/types'
 import { LocalStorageObligationRepository, LocalStorageObligationActionRepository } from '@/repositories'
+import { SyncedRepository, syncEngine } from '@/api/sync'
 import { generateId } from '@/utils/id'
 import { isAfter, parseISO } from 'date-fns'
 
-const obligationRepo = new LocalStorageObligationRepository()
-const actionRepo = new LocalStorageObligationActionRepository()
+const obligationRepo = new SyncedRepository(new LocalStorageObligationRepository(), 'obligation', syncEngine)
+const actionRepo = new SyncedRepository(new LocalStorageObligationActionRepository(), 'obligationAction', syncEngine)
 
 export const useObligationsStore = defineStore('obligations', () => {
   const obligations = ref<Obligation[]>([])

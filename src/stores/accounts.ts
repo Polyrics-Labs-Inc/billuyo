@@ -2,9 +2,10 @@ import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import type { Account } from '@/types'
 import { LocalStorageAccountRepository } from '@/repositories'
+import { SyncedRepository, syncEngine } from '@/api/sync'
 import { generateId } from '@/utils/id'
 
-const repo = new LocalStorageAccountRepository()
+const repo = new SyncedRepository(new LocalStorageAccountRepository(), 'account', syncEngine)
 
 export const useAccountsStore = defineStore('accounts', () => {
   const items = ref<Account[]>([])
