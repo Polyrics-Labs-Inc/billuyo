@@ -1,12 +1,12 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import type { Obligation, ObligationAction, PeriodInfo } from '@/types'
-import { LocalStorageObligationRepository, LocalStorageObligationActionRepository } from '@/repositories'
+import { LocalStorageRepository } from '@/repositories'
 import { generateId } from '@/utils/id'
 import { isAfter, parseISO } from 'date-fns'
 
-const obligationRepo = new LocalStorageObligationRepository()
-const actionRepo = new LocalStorageObligationActionRepository()
+const obligationRepo = new LocalStorageRepository<Obligation>('billuyo:obligations')
+const actionRepo = new LocalStorageRepository<ObligationAction>('billuyo:obligationActions')
 
 export const useObligationsStore = defineStore('obligations', () => {
   const obligations = ref<Obligation[]>([])
