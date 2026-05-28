@@ -1,12 +1,11 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { Plus, X } from 'lucide-vue-next'
+import { Plus, X, ChevronDown, ChevronUp } from 'lucide-vue-next'
 import ClayInput from '@/components/ui/ClayInput.vue'
 import ClaySelect from '@/components/ui/ClaySelect.vue'
 import ClayButton from '@/components/ui/ClayButton.vue'
-import type { Account, Category, TransactionEffect } from '@/types'
-import { generateId } from '@/utils/id'
+import type { Account, Category, TransactionEffect, Direction } from '@/types'
 
 const { t } = useI18n()
 
@@ -14,6 +13,7 @@ const props = defineProps<{
   accounts: Account[]
   categories: Category[]
   defaultCurrency: string
+  defaultAccountId?: string
   initialData?: {
     amount: number
     currency: string
@@ -46,10 +46,42 @@ const date = ref(props.initialData?.date ?? dateStr)
 const time = ref(props.initialData?.time ?? timeStr)
 const description = ref(props.initialData?.description ?? '')
 
+const hasInitialEffects = props.initialData && props.initialData.effects.length > 0
+const showAdvanced = ref(hasInitialEffects ? props.initialData!.effects.length > 1 : false)
+
+const selectedAccountId = ref(
+  props.initialData?.effects[0]?.accountId ?? props.defaultAccountId ?? (props.accounts[0]?.id ?? ''),
+)
+const selectedCategoryId = ref(props.initialData?.effects[0]?.categoryId ?? '')
+
+const selectedCategory = computed(() =>
+  props.categories.find(c => c.id === selectedCategoryId.value)
+)
+
+const autoDirection = computed<Direction>(() =>
+  selectedCategory.value?.defaultDirection ?? 'debit'
+)
+
+watch(selectedCategoryId, () => {
+  if (showAdvanced.value) return
+  effects.value[0].direction = autoDirection.value
+  effects.value[0].categoryId = selectedCategoryId.value
+})
+
+watch(selectedAccountId, (val) => {
+  if (showAdvanced.value) return
+  effects.value[0].accountId = val
+})
+
+watch(amount, (val) => {
+  if (showAdvanced.value) return
+  if (effects.value[0]) effects.value[0].amount = val
+})
+
 interface EffectRow {
   localId: number
   accountId: string
-  direction: 'credit' | 'debit'
+  direction: Direction
   amount: number
   categoryId: string
 }
@@ -61,17 +93,53 @@ const effects = ref<EffectRow[]>(
     direction: e.direction,
     amount: e.amount,
     categoryId: e.categoryId,
-  })) ?? [{ localId: 1, accountId: '', direction: 'debit', amount: 0, categoryId: '' }]
+  })) ?? [
+    {
+      localId: 1,
+      accountId: selectedAccountId.value,
+      direction: autoDirection.value,
+      amount: amount.value,
+      categoryId: selectedCategoryId.value,
+    },
+  ]
 )
 
 let nextId = Date.now()
+
 function addEffect() {
-  effects.value.push({ localId: ++nextId, accountId: '', direction: 'debit', amount: 0, categoryId: '' })
+  effects.value.push({
+    localId: ++nextId,
+    accountId: '',
+    direction: 'debit',
+    amount: 0,
+    categoryId: '',
+  })
 }
 
 function removeEffect(localId: number) {
   if (effects.value.length <= 1) return
   effects.value = effects.value.filter(e => e.localId !== localId)
+}
+
+function syncToAdvanced() {
+  if (effects.value.length === 0) {
+    effects.value.push({
+      localId: ++nextId,
+      accountId: selectedAccountId.value,
+      direction: autoDirection.value,
+      amount: amount.value,
+      categoryId: selectedCategoryId.value,
+    })
+    return
+  }
+  effects.value[0].accountId = selectedAccountId.value
+  effects.value[0].direction = autoDirection.value
+  effects.value[0].amount = amount.value
+  effects.value[0].categoryId = selectedCategoryId.value
+}
+
+function toggleAdvanced() {
+  showAdvanced.value = !showAdvanced.value
 }
 
 function handleSubmit() {
@@ -111,6 +179,14 @@ const currencyOptions = [
   { value: 'CLP', label: 'CLP ($)' },
   { value: 'PEN', label: 'PEN (S/)' },
 ]
+
+const accountOptions = computed(() =>
+  props.accounts.map(a => ({ value: a.id, label: a.name }))
+)
+
+const categoryOptions = computed(() =>
+  props.categories.map(c => ({ value: c.id, label: c.name }))
+)
 </script>
 
 <template>
@@ -127,7 +203,38 @@ const currencyOptions = [
       <ClayInput v-model="time" type="time" :label="t('common.time')" />
     </div>
 
-    <div class="flex flex-col gap-3">
+    <div v-if="!showAdvanced" class="flex flex-col gap-3">
+      <div class="grid grid-cols-2 gap-3">
+        <ClaySelect
+          v-model="selectedAccountId"
+          :label="t('transactions.selectAccount')"
+          :options="accountOptions"
+        />
+        <ClaySelect
+          v-model="selectedCategoryId"
+          :label="t('transactions.selectCategory')"
+          :options="categoryOptions"
+        />
+      </div>
+
+      <div class="flex items-center justify-between px-1">
+        <span class="text-xs text-clay-muted">
+          {{ t(autoDirection === 'credit' ? 'transactions.credit' : 'transactions.debit') }}
+          <span v-if="selectedCategory" class="font-medium">· {{ selectedCategory.name }}</span>
+        </span>
+        <button type="button" class="clay-button-ghost text-xs text-clay-primary flex items-center gap-1 p-1" @click="toggleAdvanced">
+          {{ t('transactions.addEffect') }}
+          <ChevronDown class="w-3.5 h-3.5" />
+        </button>
+      </div>
+    </div>
+
+    <div v-if="showAdvanced" class="flex flex-col gap-3">
+      <button type="button" class="clay-button-ghost text-xs text-clay-primary self-start flex items-center gap-1 p-1" @click="toggleAdvanced">
+        <ChevronUp class="w-3.5 h-3.5" />
+        {{ t('common.simple') }}
+      </button>
+
       <div class="flex items-center justify-between">
         <span class="text-xs font-medium text-clay-muted">{{ t('transactions.transactionEffects') }}</span>
         <button type="button" class="clay-button-ghost text-xs text-clay-primary p-1 flex items-center gap-1" @click="addEffect">
@@ -153,7 +260,7 @@ const currencyOptions = [
           v-model="effect.accountId"
           :label="t('transactions.selectAccount')"
           :placeholder="t('transactions.selectAccount')"
-          :options="accounts.map(a => ({ value: a.id, label: a.name }))"
+          :options="accountOptions"
         />
 
         <div class="grid grid-cols-2 gap-2">
@@ -172,7 +279,7 @@ const currencyOptions = [
           v-model="effect.categoryId"
           :label="t('transactions.selectCategory')"
           :placeholder="t('transactions.selectCategory')"
-          :options="categories.map(c => ({ value: c.id, label: c.name }))"
+          :options="categoryOptions"
         />
       </div>
     </div>

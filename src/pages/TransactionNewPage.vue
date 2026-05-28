@@ -37,6 +37,7 @@ async function handleSubmit(data: any) {
         :accounts="accountsStore.items"
         :categories="categoriesStore.items"
         :default-currency="appStore.settings.defaultCurrency"
+        :default-account-id="accountsStore.defaultExpense?.id"
         @submit="handleSubmit"
         @cancel="router.back()"
       />

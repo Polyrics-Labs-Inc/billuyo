@@ -56,6 +56,7 @@ async function handleSubmit(data: {
         :accounts="accountsStore.items"
         :categories="categoriesStore.items"
         :default-currency="appStore.settings.defaultCurrency"
+        :default-account-id="accountsStore.defaultExpense?.id"
         :initial-data="{
           amount: transaction.amount,
           currency: transaction.currency,
