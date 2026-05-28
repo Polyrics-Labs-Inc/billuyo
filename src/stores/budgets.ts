@@ -1,10 +1,10 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import type { Budget } from '@/types'
-import { LocalStorageRepository } from '@/repositories'
+import { LocalStorageBudgetRepository } from '@/repositories'
 import { generateId } from '@/utils/id'
 
-const repo = new LocalStorageRepository<Budget>('billuyo:budgets')
+const repo = new LocalStorageBudgetRepository()
 
 export const useBudgetsStore = defineStore('budgets', () => {
   const items = ref<Budget[]>([])
