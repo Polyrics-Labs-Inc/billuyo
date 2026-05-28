@@ -7,7 +7,7 @@ import { useAppStore } from '@/stores/app'
 import { useCategoriesStore } from '@/stores/categories'
 import { useAccountsStore } from '@/stores/accounts'
 import { useTransactionsStore } from '@/stores/transactions'
-import { useTrackingStore } from '@/stores/tracking'
+import { useBudgetsStore } from '@/stores/budgets'
 import { useObligationsStore } from '@/stores/obligations'
 
 const router = useRouter()
@@ -16,7 +16,7 @@ const appStore = useAppStore()
 const categoriesStore = useCategoriesStore()
 const accountsStore = useAccountsStore()
 const transactionsStore = useTransactionsStore()
-const trackingStore = useTrackingStore()
+const budgetsStore = useBudgetsStore()
 const obligationsStore = useObligationsStore()
 
 onMounted(async () => {
@@ -26,7 +26,7 @@ onMounted(async () => {
     categoriesStore.load(),
     accountsStore.load(),
     transactionsStore.load(),
-    trackingStore.load(),
+    budgetsStore.load(),
     obligationsStore.load(),
   ])
 

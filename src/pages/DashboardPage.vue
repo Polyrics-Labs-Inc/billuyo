@@ -5,7 +5,7 @@ import { useI18n } from 'vue-i18n'
 import { useAppStore } from '@/stores/app'
 import { useAccountsStore } from '@/stores/accounts'
 import { useTransactionsStore } from '@/stores/transactions'
-import { useTrackingStore } from '@/stores/tracking'
+import { useBudgetsStore } from '@/stores/budgets'
 import { useObligationsStore } from '@/stores/obligations'
 import { useCategoriesStore } from '@/stores/categories'
 import { formatCurrency } from '@/utils/currency'
@@ -20,7 +20,7 @@ const router = useRouter()
 const appStore = useAppStore()
 const accountsStore = useAccountsStore()
 const transactionsStore = useTransactionsStore()
-const trackingStore = useTrackingStore()
+const budgetsStore = useBudgetsStore()
 const obligationsStore = useObligationsStore()
 const categoriesStore = useCategoriesStore()
 
@@ -28,7 +28,7 @@ onMounted(async () => {
   await Promise.all([
     accountsStore.load(),
     transactionsStore.load(),
-    trackingStore.load(),
+    budgetsStore.load(),
     obligationsStore.load(),
     categoriesStore.load(),
   ])
@@ -140,9 +140,9 @@ const totalExpenses = computed(() => {
       <ClayCard padding="p-4" hover>
         <div class="flex items-center gap-2 mb-1">
           <Target class="w-4 h-4 text-clay-primary" />
-          <span class="text-xs text-clay-muted">{{ t('dashboard.activeTrackings') }}</span>
+          <span class="text-xs text-clay-muted">{{ t('dashboard.activeBudgets') }}</span>
         </div>
-        <p class="text-lg font-bold text-clay-ink">{{ trackingStore.items.length }}</p>
+        <p class="text-lg font-bold text-clay-ink">{{ budgetsStore.items.length }}</p>
       </ClayCard>
 
       <ClayCard padding="p-4" hover @click="router.push('/obligations')">

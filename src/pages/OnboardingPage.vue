@@ -8,7 +8,7 @@ import { useDataExport } from '@/composables/useDataExport'
 import { validateAppData, createEmptyAppData } from '@/utils/validation'
 import { useCategoriesStore } from '@/stores/categories'
 import { useTransactionsStore } from '@/stores/transactions'
-import { useTrackingStore } from '@/stores/tracking'
+import { useBudgetsStore } from '@/stores/budgets'
 import { useObligationsStore } from '@/stores/obligations'
 import ClayButton from '@/components/ui/ClayButton.vue'
 import ClayInput from '@/components/ui/ClayInput.vue'
@@ -21,7 +21,7 @@ const appStore = useAppStore()
 const accountsStore = useAccountsStore()
 const categoriesStore = useCategoriesStore()
 const transactionsStore = useTransactionsStore()
-const trackingStore = useTrackingStore()
+const budgetsStore = useBudgetsStore()
 const obligationsStore = useObligationsStore()
 const { importFile } = useDataExport()
 
@@ -62,7 +62,7 @@ async function doImport() {
     await categoriesStore.setAllData(data.categories)
     await accountsStore.setAllData(data.accounts)
     await transactionsStore.setAllData(data.transactions)
-    await trackingStore.setAllData(data.trackingEntries)
+    await budgetsStore.setAllData(data.budgets)
     await obligationsStore.setAllData(data.obligations ?? [], data.obligationActions ?? [])
     appStore.resetSettings(data.settings)
     appStore.setOnboarded()

@@ -6,7 +6,7 @@ import { useAppStore } from '@/stores/app'
 import { useCategoriesStore } from '@/stores/categories'
 import { useAccountsStore } from '@/stores/accounts'
 import { useTransactionsStore } from '@/stores/transactions'
-import { useTrackingStore } from '@/stores/tracking'
+import { useBudgetsStore } from '@/stores/budgets'
 import { useObligationsStore } from '@/stores/obligations'
 import { collectAllData } from '@/stores/collectAll'
 import { useDataExport } from '@/composables/useDataExport'
@@ -28,7 +28,7 @@ const appStore = useAppStore()
 const categoriesStore = useCategoriesStore()
 const accountsStore = useAccountsStore()
 const transactionsStore = useTransactionsStore()
-const trackingStore = useTrackingStore()
+const budgetsStore = useBudgetsStore()
 const obligationsStore = useObligationsStore()
 const { download, importFile } = useDataExport()
 
@@ -85,11 +85,8 @@ async function confirmImport() {
     await categoriesStore.setAllData(data.categories)
     await accountsStore.setAllData(data.accounts)
     await transactionsStore.setAllData(data.transactions)
-    await trackingStore.setAllData(data.trackingEntries)
-    await obligationsStore.setAllData(
-      data.obligations ?? (data as any).budgets ?? [],
-      data.obligationActions ?? (data as any).budgetActions ?? [],
-    )
+    await budgetsStore.setAllData(data.budgets)
+    await obligationsStore.setAllData(data.obligations ?? [], data.obligationActions ?? [])
     if (data.settings) {
       appStore.resetSettings(data.settings)
     }
@@ -104,7 +101,7 @@ async function confirmClear() {
   await categoriesStore.setAllData([])
   await accountsStore.setAllData([])
   await transactionsStore.setAllData([])
-  await trackingStore.setAllData([])
+  await budgetsStore.setAllData([])
   await obligationsStore.setAllData([], [])
   localStorage.clear()
   appStore.resetSettings()

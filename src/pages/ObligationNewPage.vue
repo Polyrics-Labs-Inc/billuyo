@@ -6,7 +6,7 @@ import { useObligationsStore } from '@/stores/obligations'
 import { useAccountsStore } from '@/stores/accounts'
 import { useCategoriesStore } from '@/stores/categories'
 import { useAppStore } from '@/stores/app'
-import ObligationForm from '@/components/tracking/ObligationForm.vue'
+import ObligationForm from '@/components/budgets/ObligationForm.vue'
 import TopBar from '@/components/layout/TopBar.vue'
 
 const { t } = useI18n()

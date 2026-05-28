@@ -1,31 +1,31 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import type { TrackingEntry } from '@/types'
+import type { Budget } from '@/types'
 import { LocalStorageRepository } from '@/repositories'
 import { generateId } from '@/utils/id'
 
-const repo = new LocalStorageRepository<TrackingEntry>('billuyo:tracking')
+const repo = new LocalStorageRepository<Budget>('billuyo:budgets')
 
-export const useTrackingStore = defineStore('tracking', () => {
-  const items = ref<TrackingEntry[]>([])
+export const useBudgetsStore = defineStore('budgets', () => {
+  const items = ref<Budget[]>([])
 
   async function load() {
     items.value = await repo.getAll()
   }
 
-  async function create(data: Omit<TrackingEntry, 'id'>) {
-    const item: TrackingEntry = { ...data, id: generateId() }
+  async function create(data: Omit<Budget, 'id'>) {
+    const item: Budget = { ...data, id: generateId() }
     items.value.push(item)
     await repo.create(item)
     return item
   }
 
-  async function update(id: string, data: Partial<TrackingEntry>) {
+  async function update(id: string, data: Partial<Budget>) {
     items.value = items.value.map(i => i.id === id ? { ...i, ...data } : i)
-    await repo.update(id, { ...data, id } as TrackingEntry)
+    await repo.update(id, { ...data, id } as Budget)
   }
 
-  async function setAllData(data: TrackingEntry[]) {
+  async function setAllData(data: Budget[]) {
     items.value = data
     await repo.setAll(data)
   }
@@ -35,7 +35,7 @@ export const useTrackingStore = defineStore('tracking', () => {
     await repo.delete(id)
   }
 
-  function getById(id: string): TrackingEntry | undefined {
+  function getById(id: string): Budget | undefined {
     return items.value.find(i => i.id === id)
   }
 

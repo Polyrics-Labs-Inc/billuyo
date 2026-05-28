@@ -57,9 +57,9 @@ export const useObligationsStore = defineStore('obligations', () => {
     actionRepo.clear()
   }
 
-  function getObligationsForPeriod(trackingEntryId: string, period: PeriodInfo): Obligation[] {
+  function getObligationsForPeriod(budgetId: string, period: PeriodInfo): Obligation[] {
     return obligations.value.filter(o => {
-      if (o.trackingEntryId && o.trackingEntryId !== trackingEntryId) return false
+      if (o.budgetId && o.budgetId !== budgetId) return false
       const start = parseISO(o.frequency.startDate)
       return !isAfter(start, period.end)
     })

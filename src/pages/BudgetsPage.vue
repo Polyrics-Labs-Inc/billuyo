@@ -2,7 +2,7 @@
 import { onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { useTrackingStore } from '@/stores/tracking'
+import { useBudgetsStore } from '@/stores/budgets'
 import ClayCard from '@/components/ui/ClayCard.vue'
 import ClayButton from '@/components/ui/ClayButton.vue'
 import ClayEmptyState from '@/components/ui/ClayEmptyState.vue'
@@ -12,32 +12,32 @@ import { formatFrequency } from '@/utils/frequency'
 
 const { t } = useI18n()
 const router = useRouter()
-const trackingStore = useTrackingStore()
+const budgetsStore = useBudgetsStore()
 
-onMounted(() => trackingStore.load())
+onMounted(() => budgetsStore.load())
 </script>
 
 <template>
   <div>
-    <TopBar :title="t('tracking.title')" :right-action="t('common.add')" @right-click="router.push('/tracking/new')" />
+    <TopBar :title="t('budgets.title')" :right-action="t('common.add')" @right-click="router.push('/budgets/new')" />
 
     <div class="py-4 space-y-3">
-      <div v-if="trackingStore.items.length === 0">
+      <div v-if="budgetsStore.items.length === 0">
         <ClayEmptyState
-          :title="t('tracking.noTrackings')"
+          :title="t('budgets.noBudgets')"
           :description="t('empty.startAdding')"
         >
-          <ClayButton class="mt-3" @click="router.push('/tracking/new')">
-            <Plus class="w-4 h-4" /> {{ t('tracking.newEntry') }}
+          <ClayButton class="mt-3" @click="router.push('/budgets/new')">
+            <Plus class="w-4 h-4" /> {{ t('budgets.newBudget') }}
           </ClayButton>
         </ClayEmptyState>
       </div>
 
       <ClayCard
-        v-for="entry in trackingStore.items"
+        v-for="entry in budgetsStore.items"
         :key="entry.id"
         hover
-        @click="router.push(`/tracking/${entry.id}`)"
+        @click="router.push(`/budgets/${entry.id}`)"
       >
         <div class="flex items-center gap-3">
           <div

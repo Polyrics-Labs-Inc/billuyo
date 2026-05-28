@@ -7,7 +7,7 @@
     "dashboard": "Dashboard",
     "transactions": "Transactions",
     "accounts": "Accounts",
-    "tracking": "Tracking",
+    "budgets": "Budgets",
     "obligations": "Obligations",
     "categories": "Categories",
     "settings": "Settings"
@@ -64,7 +64,7 @@
     "accountName": "Account name",
     "accountCurrency": "Default currency",
     "setupComplete": "All set!",
-    "setupCompleteDesc": "You're ready to start tracking. Add transactions, create tracking entries, and set up obligations.",
+    "setupCompleteDesc": "You're ready to start tracking. Add transactions, create budgets, and set up obligations.",
     "goToDashboard": "Go to Dashboard",
     "importSuccess": "Data imported successfully!",
     "importError": "Invalid file. Please select a valid BilluYo export file."
@@ -78,7 +78,7 @@
     "expenseTotal": "Expenses",
     "savingsTotal": "Savings",
     "netFlow": "Net Flow",
-    "activeTrackings": "Active Trackings",
+    "activeBudgets": "Active Budgets",
     "pendingObligations": "Pending Obligations"
   },
   "transactions": {
@@ -106,10 +106,10 @@
     "noAccounts": "No accounts yet. Create one to get started!",
     "deleteWarning": "This account has transactions. Delete them first or reassign."
   },
-  "tracking": {
-    "title": "Tracking Entries",
-    "newEntry": "New Tracking Entry",
-    "editEntry": "Edit Entry",
+  "budgets": {
+    "title": "Budgets",
+    "newBudget": "New Budget",
+    "editBudget": "Edit Budget",
     "period": "Period",
     "previousPeriod": "Previous",
     "nextPeriod": "Next",
@@ -120,7 +120,7 @@
     "savingsSection": "Savings",
     "markDone": "Mark as done",
     "markPaid": "Mark as paid",
-    "noTrackings": "No tracking entries yet",
+    "noBudgets": "No budgets yet",
     "obligationCompleted": "Completed",
     "noObligations": "No obligations for this period",
     "summary": "Summary",

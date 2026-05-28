@@ -7,7 +7,7 @@
     "dashboard": "Inicio",
     "transactions": "Transacciones",
     "accounts": "Cuentas",
-    "tracking": "Seguimientos",
+    "budgets": "Presupuestos",
     "obligations": "Obligaciones",
     "categories": "Categorías",
     "settings": "Ajustes"
@@ -78,7 +78,7 @@
     "expenseTotal": "Gastos",
     "savingsTotal": "Ahorros",
     "netFlow": "Flujo Neto",
-    "activeTrackings": "Seguimientos Activos",
+    "activeBudgets": "Presupuestos Activos",
     "pendingObligations": "Obligaciones Pendientes"
   },
   "transactions": {
@@ -106,10 +106,10 @@
     "noAccounts": "No hay cuentas aún. ¡Crea una para empezar!",
     "deleteWarning": "Esta cuenta tiene transacciones. Elimínalas primero o reasígnalas."
   },
-  "tracking": {
-    "title": "Seguimientos",
-    "newEntry": "Nuevo Seguimiento",
-    "editEntry": "Editar Seguimiento",
+  "budgets": {
+    "title": "Presupuestos",
+    "newBudget": "Nuevo Presupuesto",
+    "editBudget": "Editar Presupuesto",
     "period": "Período",
     "previousPeriod": "Anterior",
     "nextPeriod": "Siguiente",
@@ -120,7 +120,7 @@
     "savingsSection": "Ahorros",
     "markDone": "Marcar como hecho",
     "markPaid": "Marcar como pagado",
-    "noTrackings": "No hay seguimientos aún",
+    "noBudgets": "No hay presupuestos aún",
     "obligationCompleted": "Completado",
     "noObligations": "Sin obligaciones para este período",
     "summary": "Resumen",

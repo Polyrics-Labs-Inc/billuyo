@@ -55,7 +55,7 @@ export interface Transaction {
   createdAt: string
 }
 
-export interface TrackingEntry {
+export interface Budget {
   id: string
   name: string
   description: string
@@ -74,7 +74,7 @@ export interface Obligation {
   frequency: Frequency
   accountId: string
   categoryId: string
-  trackingEntryId?: string
+  budgetId?: string
   color: string
 }
 
@@ -103,7 +103,7 @@ export interface AppData {
   categories: Category[]
   accounts: Account[]
   transactions: Transaction[]
-  trackingEntries: TrackingEntry[]
+  budgets: Budget[]
   obligations: Obligation[]
   obligationActions: ObligationAction[]
 }

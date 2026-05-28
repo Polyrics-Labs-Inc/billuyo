@@ -5,7 +5,7 @@ const CURRENT_VERSION = '0.1.0'
 const REQUIRED_KEYS: (keyof AppData)[] = [
   'version', 'exportedAt', 'settings',
   'categories', 'accounts', 'transactions',
-  'trackingEntries', 'obligations', 'obligationActions',
+  'budgets', 'obligations', 'obligationActions',
 ]
 
 export interface ValidationResult {
@@ -19,12 +19,36 @@ function isObject(v: unknown): v is Record<string, unknown> {
   return typeof v === 'object' && v !== null && !Array.isArray(v)
 }
 
+function migrateLegacy(raw: Record<string, unknown>): void {
+  // v0.1.0: trackingEntries → budgets
+  if ('trackingEntries' in raw && !('budgets' in raw)) {
+    raw.budgets = raw.trackingEntries
+  }
+
+  // v0.1.0: trackingEntryId → budgetId in obligations
+  if (Array.isArray(raw.obligations)) {
+    for (const obl of raw.obligations) {
+      if (obl && typeof obl === 'object' && 'trackingEntryId' in obl && !('budgetId' in obl)) {
+        ;(obl as any).budgetId = (obl as any).trackingEntryId
+        delete (obl as any).trackingEntryId
+      }
+    }
+  }
+}
+
 export function validateAppData(raw: unknown): ValidationResult {
   const errors: string[] = []
   const warnings: string[] = []
 
   if (!isObject(raw)) {
     return { valid: false, errors: ['Root must be a JSON object'], warnings: [], data: null }
+  }
+
+  // Run migration before validation
+  const needsMigration = 'trackingEntries' in raw
+  if (needsMigration) {
+    warnings.push('Legacy data detected — migrating from v0.1.0 format')
+    migrateLegacy(raw)
   }
 
   for (const key of REQUIRED_KEYS) {
@@ -41,7 +65,7 @@ export function validateAppData(raw: unknown): ValidationResult {
     errors.push('"settings" must be an object')
   }
 
-  for (const listKey of ['categories', 'accounts', 'transactions', 'trackingEntries', 'obligations', 'obligationActions'] as const) {
+  for (const listKey of ['categories', 'accounts', 'transactions', 'budgets', 'obligations', 'obligationActions'] as const) {
     const arr = raw[listKey]
     if (!Array.isArray(arr)) {
       if (!errors.includes(`Missing required key: "${listKey}"`)) {
@@ -75,7 +99,7 @@ export function createEmptyAppData(settings?: Partial<AppSettings>): AppData {
     categories: [],
     accounts: [],
     transactions: [],
-    trackingEntries: [],
+    budgets: [],
     obligations: [],
     obligationActions: [],
   }
