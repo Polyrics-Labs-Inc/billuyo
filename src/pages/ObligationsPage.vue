@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { onMounted } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useObligationsStore } from '@/stores/obligations'
 import { useAccountsStore } from '@/stores/accounts'
 import { useAppStore } from '@/stores/app'
+import ClayConfirmDialog from '@/components/ui/ClayConfirmDialog.vue'
 import { formatCurrency } from '@/utils/currency'
 import { formatFrequency } from '@/utils/frequency'
 import ClayCard from '@/components/ui/ClayCard.vue'
@@ -12,10 +13,11 @@ import ClayButton from '@/components/ui/ClayButton.vue'
 import ClayBadge from '@/components/ui/ClayBadge.vue'
 import ClayEmptyState from '@/components/ui/ClayEmptyState.vue'
 import TopBar from '@/components/layout/TopBar.vue'
-import { Plus, TrendingUp, TrendingDown, PiggyBank, Trash2 } from 'lucide-vue-next'
+import { Plus, TrendingUp, TrendingDown, PiggyBank, Trash2, Pencil } from 'lucide-vue-next'
 
 const { t } = useI18n()
 const router = useRouter()
+const deleteTarget = ref<string | null>(null)
 const obligationsStore = useObligationsStore()
 const accountsStore = useAccountsStore()
 const appStore = useAppStore()
@@ -31,9 +33,14 @@ function getAccountName(id: string) {
   return accountsStore.getById(id)?.name ?? 'Unknown'
 }
 
-async function handleDelete(id: string) {
-  if (!confirm(t('common.confirmDelete'))) return
-  await obligationsStore.removeObligation(id)
+function promptDelete(id: string) {
+  deleteTarget.value = id
+}
+
+async function confirmDelete() {
+  if (!deleteTarget.value) return
+  await obligationsStore.removeObligation(deleteTarget.value)
+  deleteTarget.value = null
 }
 
 const typeIcon: Record<string, any> = {
@@ -98,11 +105,23 @@ const typeIcon: Record<string, any> = {
             <p class="text-xs text-clay-muted/70">{{ formatFrequency(obl.frequency, t) }}</p>
             <p class="text-xs text-clay-muted/70">{{ t('obligations.associatedAccount') }}: {{ getAccountName(obl.accountId) }}</p>
           </div>
-          <button class="clay-button-ghost p-1.5" @click="handleDelete(obl.id)">
+          <button class="clay-button-ghost p-1.5" @click="router.push(`/obligations/${obl.id}/edit`)">
+            <Pencil class="w-4 h-4 text-clay-muted" />
+          </button>
+          <button class="clay-button-ghost p-1.5" @click="promptDelete(obl.id)">
             <Trash2 class="w-4 h-4 text-clay-expense" />
           </button>
         </div>
       </ClayCard>
     </div>
+
+    <ClayConfirmDialog
+      :show="!!deleteTarget"
+      :title="t('common.delete')"
+      :message="t('common.confirmDelete')"
+      variant="danger"
+      @confirm="confirmDelete()"
+      @cancel="deleteTarget = null"
+    />
   </div>
 </template>

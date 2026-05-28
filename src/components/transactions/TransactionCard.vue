@@ -4,6 +4,7 @@ import { formatCurrency } from '@/utils/currency'
 import { useI18n } from 'vue-i18n'
 import { useCategoriesStore } from '@/stores/categories'
 import { useAccountsStore } from '@/stores/accounts'
+import { categoryDisplayName } from '@/utils/category'
 import { ArrowRight, ArrowLeft, CornerDownRight } from 'lucide-vue-next'
 import type { Transaction } from '@/types'
 import { useAppStore } from '@/stores/app'
@@ -61,7 +62,7 @@ const formattedAmount = computed(() =>
       <div class="flex items-center gap-2 mt-1 text-xs text-clay-muted">
         <span>{{ transaction.date }}</span>
         <span v-if="primaryCategory" class="clay-badge" :style="{ backgroundColor: primaryCategory.color + '20', color: primaryCategory.color }">
-          {{ primaryCategory.name }}
+          {{ categoryDisplayName(primaryCategory, t) }}
         </span>
       </div>
       <p class="text-[11px] text-clay-muted/70 mt-0.5 truncate">{{ accountNames }}</p>

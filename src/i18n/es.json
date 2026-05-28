@@ -124,6 +124,8 @@
     "noBudgets": "No hay presupuestos aún",
     "obligationCompleted": "Completado",
     "noObligations": "Sin obligaciones para este período",
+    "undoComplete": "Deshacer",
+    "undoCompleteDesc": "Esto eliminará la transacción y desmarcará esta obligación.",
     "summary": "Resumen",
     "totalIncome": "Total Ingresos",
     "totalExpenses": "Total Gastos",
@@ -152,7 +154,21 @@
     "defaultDirection": "Dirección predeterminada",
     "noCategories": "No hay categorías aún",
     "receivesMoney": "Recibe dinero (crédito)",
-    "sendsMoney": "Gasta dinero (débito)"
+    "sendsMoney": "Gasta dinero (débito)",
+    "default": {
+      "salary": "Salario",
+      "freelance": "Freelance",
+      "food": "Comida",
+      "transport": "Transporte",
+      "shopping": "Compras",
+      "bills": "Facturas",
+      "entertainment": "Entretenimiento",
+      "health": "Salud",
+      "transfer": "Transferencia",
+      "savings": "Ahorros",
+      "income": "Ingresos",
+      "expense": "Gastos"
+    }
   },
   "settings": {
     "title": "Ajustes",
@@ -170,6 +186,10 @@
     "clearData": "Borrar Todos los Datos",
     "clearConfirm": "¿Esto borrará TODOS tus datos. Estás seguro?",
     "dataCleared": "Todos los datos han sido borrados."
+  },
+  "calculator": {
+    "use": "Usar",
+    "error": "Error"
   },
   "frequency": {
     "days": "Día(s)",

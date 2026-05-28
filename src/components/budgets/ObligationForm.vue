@@ -1,9 +1,12 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { Calculator } from 'lucide-vue-next'
 import ClayInput from '@/components/ui/ClayInput.vue'
 import ClaySelect from '@/components/ui/ClaySelect.vue'
 import ClayButton from '@/components/ui/ClayButton.vue'
+import ClayCalculator from '@/components/ui/ClayCalculator.vue'
+import { categoryDisplayName } from '@/utils/category'
 import type { ObligationType, Frequency, FrequencyUnit, Account, Category } from '@/types'
 
 const { t } = useI18n()
@@ -47,6 +50,7 @@ const freqUnit = ref<FrequencyUnit>(props.initialData?.frequency?.unit ?? 'M')
 const startDate = ref(props.initialData?.frequency?.startDate ?? new Date().toISOString().slice(0, 10))
 const accountId = ref(props.initialData?.accountId ?? '')
 const categoryId = ref(props.initialData?.categoryId ?? '')
+const showCalculator = ref(false)
 const color = ref(props.initialData?.color ?? '#F59E0B')
 
 const typeOptions = [
@@ -99,7 +103,18 @@ function handleSubmit() {
     <ClaySelect v-model="type" :label="t('obligations.selectType')" :options="typeOptions" />
 
     <div class="grid grid-cols-2 gap-3">
-      <ClayInput v-model.number="expectedValue" :label="t('common.expectedValue')" type="number" step="0.01" placeholder="0.00" />
+      <div class="flex gap-2 items-end">
+        <div class="flex-1">
+          <ClayInput v-model.number="expectedValue" :label="t('common.expectedValue')" type="number" step="0.01" placeholder="0.00" />
+        </div>
+        <button
+          type="button"
+          class="clay-button-ghost w-10 h-10 rounded-clay-sm flex items-center justify-center mb-0.5 shrink-0"
+          @click="showCalculator = true"
+        >
+          <Calculator class="w-5 h-5 text-clay-muted" />
+        </button>
+      </div>
       <ClaySelect v-model="currency" :label="t('common.currency')" :options="currencyOptions" />
     </div>
 
@@ -130,7 +145,14 @@ function handleSubmit() {
       v-model="categoryId"
       :label="t('transactions.selectCategory')"
       :placeholder="t('transactions.selectCategory')"
-      :options="categories.map(c => ({ value: c.id, label: c.name }))"
+      :options="categories.map(c => ({ value: c.id, label: categoryDisplayName(c, t) }))"
+    />
+
+    <ClayCalculator
+      :show="showCalculator"
+      :initial-value="expectedValue"
+      @close="showCalculator = false"
+      @apply="(val: number) => { expectedValue = val; showCalculator = false }"
     />
 
     <div class="flex gap-3 pt-2">

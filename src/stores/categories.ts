@@ -3,23 +3,30 @@ import { ref } from 'vue'
 import type { Category } from '@/types'
 import { LocalStorageRepository } from '@/repositories'
 import { generateId } from '@/utils/id'
+import { i18n } from '@/i18n'
 
 const repo = new LocalStorageRepository<Category>('billuyo:categories')
 
-const DEFAULT_CATEGORIES: Category[] = [
-  { id: generateId(), name: 'Salary', icon: 'Wallet', defaultDirection: 'credit', color: '#10B981', order: 0 },
-  { id: generateId(), name: 'Freelance', icon: 'Briefcase', defaultDirection: 'credit', color: '#0EA5E9', order: 1 },
-  { id: generateId(), name: 'Food', icon: 'UtensilsCrossed', defaultDirection: 'debit', color: '#F43F5E', order: 2 },
-  { id: generateId(), name: 'Transport', icon: 'Car', defaultDirection: 'debit', color: '#F59E0B', order: 3 },
-  { id: generateId(), name: 'Shopping', icon: 'ShoppingBag', defaultDirection: 'debit', color: '#EC4899', order: 4 },
-  { id: generateId(), name: 'Bills', icon: 'FileText', defaultDirection: 'debit', color: '#8B5CF6', order: 5 },
-  { id: generateId(), name: 'Entertainment', icon: 'Tv', defaultDirection: 'debit', color: '#F97316', order: 6 },
-  { id: generateId(), name: 'Health', icon: 'Heart', defaultDirection: 'debit', color: '#EF4444', order: 7 },
-  { id: generateId(), name: 'Transfer', icon: 'ArrowLeftRight', defaultDirection: 'credit', color: '#6366F1', order: 8 },
-  { id: generateId(), name: 'Savings', icon: 'PiggyBank', defaultDirection: 'debit', color: '#14B8A6', order: 9 },
-  { id: generateId(), name: 'Income', icon: 'TrendingUp', defaultDirection: 'credit', color: '#22C55E', order: 10 },
-  { id: generateId(), name: 'Expense', icon: 'TrendingDown', defaultDirection: 'debit', color: '#FB7185', order: 11 },
-]
+function getDefaultCategories(): Category[] {
+  const make = (key: string, icon: string, direction: 'credit' | 'debit', color: string, order: number): Category => {
+    const name = i18n.global.t(key)
+    return { id: generateId(), name: name !== key ? name : key.split('.').pop() || key, nameKey: key, icon, defaultDirection: direction, color, order }
+  }
+  return [
+    make('categories.default.salary', 'Wallet', 'credit', '#10B981', 0),
+    make('categories.default.freelance', 'Briefcase', 'credit', '#0EA5E9', 1),
+    make('categories.default.food', 'UtensilsCrossed', 'debit', '#F43F5E', 2),
+    make('categories.default.transport', 'Car', 'debit', '#F59E0B', 3),
+    make('categories.default.shopping', 'ShoppingBag', 'debit', '#EC4899', 4),
+    make('categories.default.bills', 'FileText', 'debit', '#8B5CF6', 5),
+    make('categories.default.entertainment', 'Tv', 'debit', '#F97316', 6),
+    make('categories.default.health', 'Heart', 'debit', '#EF4444', 7),
+    make('categories.default.transfer', 'ArrowLeftRight', 'credit', '#6366F1', 8),
+    make('categories.default.savings', 'PiggyBank', 'debit', '#14B8A6', 9),
+    make('categories.default.income', 'TrendingUp', 'credit', '#22C55E', 10),
+    make('categories.default.expense', 'TrendingDown', 'debit', '#FB7185', 11),
+  ]
+}
 
 export const useCategoriesStore = defineStore('categories', () => {
   const items = ref<Category[]>([])
@@ -27,8 +34,9 @@ export const useCategoriesStore = defineStore('categories', () => {
   async function load() {
     items.value = await repo.getAll()
     if (items.value.length === 0) {
-      await repo.setAll(DEFAULT_CATEGORIES)
-      items.value = DEFAULT_CATEGORIES
+      const defaults = getDefaultCategories()
+      await repo.setAll(defaults)
+      items.value = defaults
     }
   }
 

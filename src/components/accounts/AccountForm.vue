@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { Calculator } from 'lucide-vue-next'
 import ClayInput from '@/components/ui/ClayInput.vue'
 import ClaySelect from '@/components/ui/ClaySelect.vue'
 import ClayButton from '@/components/ui/ClayButton.vue'
+import ClayCalculator from '@/components/ui/ClayCalculator.vue'
 import type { Account } from '@/types'
 
 const { t } = useI18n()
@@ -32,6 +34,7 @@ const description = ref(props.initialData?.description ?? '')
 const currency = ref(props.initialData?.currency ?? props.defaultCurrency)
 const color = ref(props.initialData?.color ?? '#8B5CF6')
 const icon = ref(props.initialData?.icon ?? 'Wallet')
+const showCalculator = ref(false)
 const initialBalance = ref(props.initialData?.initialBalance ?? 0)
 const isDefaultExpenses = ref(props.initialData?.isDefaultExpenses ?? false)
 const isDefaultSavings = ref(props.initialData?.isDefaultSavings ?? false)
@@ -75,7 +78,18 @@ function handleSubmit() {
 
     <ClaySelect v-model="currency" :label="t('common.currency')" :options="currencyOptions" />
 
-    <ClayInput v-model.number="initialBalance" :label="t('accounts.initialBalance')" type="number" step="0.01" placeholder="0.00" />
+    <div class="flex gap-2 items-end">
+      <div class="flex-1">
+        <ClayInput v-model.number="initialBalance" :label="t('accounts.initialBalance')" type="number" step="0.01" placeholder="0.00" />
+      </div>
+      <button
+        type="button"
+        class="clay-button-ghost w-10 h-10 rounded-clay-sm flex items-center justify-center mb-0.5 shrink-0"
+        @click="showCalculator = true"
+      >
+        <Calculator class="w-5 h-5 text-clay-muted" />
+      </button>
+    </div>
 
     <div class="flex flex-col gap-1.5">
       <label class="text-xs font-medium text-clay-muted">{{ t('common.color') }}</label>
@@ -105,6 +119,13 @@ function handleSubmit() {
         <span class="text-sm text-clay-ink">{{ t('accounts.defaultSavings') }}</span>
       </label>
     </div>
+
+    <ClayCalculator
+      :show="showCalculator"
+      :initial-value="initialBalance"
+      @close="showCalculator = false"
+      @apply="(val: number) => { initialBalance = val; showCalculator = false }"
+    />
 
     <div class="flex gap-3 pt-2">
       <ClayButton variant="secondary" type="button" @click="emit('cancel')">

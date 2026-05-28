@@ -16,9 +16,11 @@ import { isoDate, isoTime } from '@/utils/id'
 import ClayCard from '@/components/ui/ClayCard.vue'
 import ClayButton from '@/components/ui/ClayButton.vue'
 import ClayBadge from '@/components/ui/ClayBadge.vue'
+import ClayPromptDialog from '@/components/ui/ClayPromptDialog.vue'
+import ClayConfirmDialog from '@/components/ui/ClayConfirmDialog.vue'
 import TopBar from '@/components/layout/TopBar.vue'
 import type { PeriodInfo, Obligation } from '@/types'
-import { ChevronLeft, ChevronRight, Check, Circle, TrendingUp, TrendingDown, PiggyBank, Pencil } from 'lucide-vue-next'
+import { ChevronLeft, ChevronRight, Check, Circle, TrendingUp, TrendingDown, PiggyBank, Pencil, RotateCcw } from 'lucide-vue-next'
 
 const { t } = useI18n()
 const router = useRouter()
@@ -84,18 +86,24 @@ const savingsObligations = computed(() =>
   obligationsForPeriod.value.filter(o => o.type === 'savings')
 )
 
-async function markObligationDone(obligation: Obligation) {
+const showPrompt = ref(false)
+const pendingObligation = ref<Obligation | null>(null)
+const promptInitialValue = ref(0)
+
+function markObligationDone(obligation: Obligation) {
   const existing = getActionForObligation(obligation)
   if (existing) return
+  pendingObligation.value = obligation
+  promptInitialValue.value = obligation.expectedValue
+  showPrompt.value = true
+}
 
-  const actualAmount = prompt(
-    `${t('common.actualAmount')} (${t('common.expectedValue')}: ${obligation.expectedValue})`,
-    String(obligation.expectedValue)
-  )
-  if (actualAmount === null) return
-
-  const amount = parseFloat(actualAmount)
-  if (isNaN(amount)) return
+async function handlePromptConfirm(amount: number) {
+  showPrompt.value = false
+  const obligation = pendingObligation.value
+  if (!obligation) return
+  if (isNaN(amount) || amount <= 0) return
+  pendingObligation.value = null
 
   const action = await obligationsStore.createAction({
     obligationId: obligation.id,
@@ -131,7 +139,7 @@ async function markObligationDone(obligation: Obligation) {
   }
 
   if (effects.length > 0) {
-    await transactionsStore.create({
+    const txn = await transactionsStore.create({
       amount,
       currency: obligation.currency,
       date: isoDate(),
@@ -140,7 +148,21 @@ async function markObligationDone(obligation: Obligation) {
       effects,
       obligationActionId: action.id,
     })
+    await obligationsStore.updateAction(action.id, { transactionId: txn.id })
   }
+}
+
+const undoAction = ref<{ actionId: string; obligation: Obligation } | null>(null)
+
+async function confirmUndo() {
+  if (!undoAction.value) return
+  const { actionId, obligation } = undoAction.value
+  const action = getActionForObligation(obligation)
+  if (action?.transactionId) {
+    await transactionsStore.remove(action.transactionId)
+  }
+  await obligationsStore.removeAction(actionId)
+  undoAction.value = null
 }
 
 function getSummary() {
@@ -202,9 +224,14 @@ const summary = computed(() => getSummary())
                 <Check class="w-3.5 h-3.5" />
                 {{ t('budgets.markDone') }}
               </button>
-              <ClayBadge v-else variant="income">
+              <button
+                v-else
+                class="clay-button-ghost text-xs px-2 py-1 flex items-center gap-1 text-clay-income"
+                @click="undoAction = { actionId: getActionForObligation(obl)!.id, obligation: obl }"
+              >
+                <RotateCcw class="w-3.5 h-3.5" />
                 {{ t('budgets.obligationCompleted') }}
-              </ClayBadge>
+              </button>
             </div>
           </ClayCard>
         </div>
@@ -230,9 +257,14 @@ const summary = computed(() => getSummary())
                 <Check class="w-3.5 h-3.5" />
                 {{ t('budgets.markPaid') }}
               </button>
-              <ClayBadge v-else variant="expense">
+              <button
+                v-else
+                class="clay-button-ghost text-xs px-2 py-1 flex items-center gap-1 text-clay-expense"
+                @click="undoAction = { actionId: getActionForObligation(obl)!.id, obligation: obl }"
+              >
+                <RotateCcw class="w-3.5 h-3.5" />
                 {{ t('budgets.obligationCompleted') }}
-              </ClayBadge>
+              </button>
             </div>
           </ClayCard>
         </div>
@@ -258,9 +290,14 @@ const summary = computed(() => getSummary())
                 <Check class="w-3.5 h-3.5" />
                 {{ t('budgets.markPaid') }}
               </button>
-              <ClayBadge v-else variant="savings">
+              <button
+                v-else
+                class="clay-button-ghost text-xs px-2 py-1 flex items-center gap-1 text-clay-savings"
+                @click="undoAction = { actionId: getActionForObligation(obl)!.id, obligation: obl }"
+              >
+                <RotateCcw class="w-3.5 h-3.5" />
                 {{ t('budgets.obligationCompleted') }}
-              </ClayBadge>
+              </button>
             </div>
           </ClayCard>
         </div>
@@ -293,5 +330,24 @@ const summary = computed(() => getSummary())
         <Pencil class="w-4 h-4" /> {{ t('common.edit') }}
       </ClayButton>
     </div>
+
+    <ClayPromptDialog
+      :show="showPrompt"
+      :title="t('budgets.markDone')"
+      :label="t('common.actualAmount')"
+      :initial-value="promptInitialValue"
+      @confirm="handlePromptConfirm"
+      @cancel="showPrompt = false; pendingObligation = null"
+    />
+
+    <ClayConfirmDialog
+      :show="!!undoAction"
+      :title="t('budgets.undoComplete') || 'Undo completion'"
+      :message="t('budgets.undoCompleteDesc') || 'This will remove the transaction and unmark this obligation.'"
+      variant="danger"
+      confirm-label="Undo"
+      @confirm="confirmUndo()"
+      @cancel="undoAction = null"
+    />
   </div>
 </template>

@@ -1,14 +1,17 @@
 <script setup lang="ts">
-import { computed, onMounted } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useTransactionsStore } from '@/stores/transactions'
 import { useAccountsStore } from '@/stores/accounts'
 import { useCategoriesStore } from '@/stores/categories'
+import { useObligationsStore } from '@/stores/obligations'
 import { useAppStore } from '@/stores/app'
 import { formatCurrency } from '@/utils/currency'
+import { categoryDisplayName } from '@/utils/category'
 import ClayCard from '@/components/ui/ClayCard.vue'
 import ClayButton from '@/components/ui/ClayButton.vue'
+import ClayConfirmDialog from '@/components/ui/ClayConfirmDialog.vue'
 import TopBar from '@/components/layout/TopBar.vue'
 import { Trash2, Pencil } from 'lucide-vue-next'
 
@@ -18,10 +21,12 @@ const route = useRoute()
 const transactionsStore = useTransactionsStore()
 const accountsStore = useAccountsStore()
 const categoriesStore = useCategoriesStore()
+const obligationsStore = useObligationsStore()
 const appStore = useAppStore()
 
 const id = route.params.id as string
 const transaction = computed(() => transactionsStore.getById(id))
+const showDeleteConfirm = ref(false)
 
 onMounted(async () => {
   await Promise.all([
@@ -36,11 +41,15 @@ function getAccountName(id: string) {
 }
 
 function getCategoryName(id: string) {
-  return categoriesStore.getById(id)?.name ?? 'Unknown'
+  const cat = categoriesStore.getById(id)
+  return cat ? categoryDisplayName(cat, t) : 'Unknown'
 }
 
-async function handleDelete() {
-  if (!confirm(t('common.confirmDelete'))) return
+async function confirmDelete() {
+  const txn = transaction.value
+  if (txn?.obligationActionId) {
+    await obligationsStore.removeAction(txn.obligationActionId)
+  }
   await transactionsStore.remove(id)
   router.push('/transactions')
 }
@@ -87,11 +96,20 @@ async function handleDelete() {
         <ClayButton variant="secondary" class="flex-1" @click="router.push(`/transactions/${id}/edit`)">
           <Pencil class="w-4 h-4" /> {{ t('common.edit') }}
         </ClayButton>
-        <ClayButton variant="danger" class="flex-1" @click="handleDelete">
+        <ClayButton variant="danger" class="flex-1" @click="showDeleteConfirm = true">
           <Trash2 class="w-4 h-4" /> {{ t('common.delete') }}
         </ClayButton>
       </div>
     </div>
+
+    <ClayConfirmDialog
+      :show="showDeleteConfirm"
+      :title="t('common.delete')"
+      :message="t('common.confirmDelete')"
+      variant="danger"
+      @confirm="confirmDelete()"
+      @cancel="showDeleteConfirm = false"
+    />
   </div>
   <div v-else>
     <TopBar showBack />

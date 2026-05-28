@@ -19,7 +19,7 @@ import ClayModal from '@/components/ui/ClayModal.vue'
 import TopBar from '@/components/layout/TopBar.vue'
 import type { Language } from '@/types'
 import {
-  Download, Upload, Globe, Banknote, Info, Trash2, AlertTriangle,
+  Download, Upload, Globe, Banknote, Tags, Info, Trash2, AlertTriangle,
 } from 'lucide-vue-next'
 
 const { t, locale } = useI18n()
@@ -189,6 +189,19 @@ async function confirmClear() {
             <p class="text-sm font-medium text-clay-ink">{{ t('settings.about') }}</p>
             <p class="text-xs text-clay-muted">{{ t('settings.version') }} 0.1.0</p>
             <p class="text-xs text-clay-muted mt-1">{{ t('settings.dataStorage') }}</p>
+          </div>
+        </div>
+      </ClayCard>
+
+      <!-- Categories -->
+      <ClayCard padding="p-4" hover @click="router.push('/categories')">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-clay-sm bg-clay-primary-light flex items-center justify-center">
+            <Tags class="w-5 h-5 text-clay-primary" />
+          </div>
+          <div>
+            <p class="text-sm font-medium text-clay-ink">{{ t('categories.title') }}</p>
+            <p class="text-xs text-clay-muted">{{ t('categories.editCategory') }}</p>
           </div>
         </div>
       </ClayCard>

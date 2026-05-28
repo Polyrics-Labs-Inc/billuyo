@@ -29,6 +29,7 @@ const routes: RouteRecordRaw[] = [
       { path: 'settings', name: 'settings', component: () => import('@/pages/SettingsPage.vue') },
       { path: 'obligations', name: 'obligations', component: () => import('@/pages/ObligationsPage.vue') },
       { path: 'obligations/new', name: 'obligation-new', component: () => import('@/pages/ObligationNewPage.vue') },
+      { path: 'obligations/:id/edit', name: 'obligation-edit', component: () => import('@/pages/ObligationEditPage.vue') },
     ],
   },
   { path: '/:pathMatch(.*)*', name: 'not-found', component: () => import('@/pages/NotFoundPage.vue') },

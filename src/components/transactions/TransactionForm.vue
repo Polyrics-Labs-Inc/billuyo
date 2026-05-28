@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { Plus, X, ChevronDown, ChevronUp } from 'lucide-vue-next'
+import { Plus, X, ChevronDown, ChevronUp, Calculator } from 'lucide-vue-next'
 import ClayInput from '@/components/ui/ClayInput.vue'
 import ClaySelect from '@/components/ui/ClaySelect.vue'
 import ClayButton from '@/components/ui/ClayButton.vue'
+import ClayCalculator from '@/components/ui/ClayCalculator.vue'
+import { categoryDisplayName } from '@/utils/category'
 import type { Account, Category, TransactionEffect, Direction } from '@/types'
 
 const { t } = useI18n()
@@ -35,6 +37,10 @@ const emit = defineEmits<{
   }]
   cancel: []
 }>()
+
+const validationError = ref('')
+const showCalculator = ref(false)
+const calculatorTarget = ref<number | 'main'>('main')
 
 const now = new Date()
 const dateStr = now.toISOString().slice(0, 10)
@@ -149,9 +155,10 @@ function handleSubmit() {
   if (effects.value.some(e => !e.categoryId)) errors.push('All effects need a category')
   if (effects.value.some(e => e.amount <= 0)) errors.push('All effect amounts must be > 0')
   if (errors.length) {
-    alert(errors.join('\n'))
+    validationError.value = errors.join('\n')
     return
   }
+  validationError.value = ''
 
   emit('submit', {
     amount: amount.value,
@@ -185,7 +192,7 @@ const accountOptions = computed(() =>
 )
 
 const categoryOptions = computed(() =>
-  props.categories.map(c => ({ value: c.id, label: c.name }))
+  props.categories.map(c => ({ value: c.id, label: categoryDisplayName(c, t) }))
 )
 </script>
 
@@ -194,7 +201,18 @@ const categoryOptions = computed(() =>
     <ClayInput v-model="description" :label="t('common.description')" placeholder="e.g. Groceries" />
 
     <div class="grid grid-cols-2 gap-3">
-      <ClayInput v-model.number="amount" :label="t('common.amount')" type="number" step="0.01" placeholder="0.00" />
+      <div class="flex gap-2 items-end">
+        <div class="flex-1">
+          <ClayInput v-model.number="amount" :label="t('common.amount')" type="number" step="0.01" placeholder="0.00" />
+        </div>
+        <button
+          type="button"
+          class="clay-button-ghost w-10 h-10 rounded-clay-sm flex items-center justify-center mb-0.5 shrink-0"
+          @click="showCalculator = true"
+        >
+          <Calculator class="w-5 h-5 text-clay-muted" />
+        </button>
+      </div>
       <ClaySelect v-model="currency" :label="t('common.currency')" :options="currencyOptions" />
     </div>
 
@@ -220,7 +238,7 @@ const categoryOptions = computed(() =>
       <div class="flex items-center justify-between px-1">
         <span class="text-xs text-clay-muted">
           {{ t(autoDirection === 'credit' ? 'transactions.credit' : 'transactions.debit') }}
-          <span v-if="selectedCategory" class="font-medium">· {{ selectedCategory.name }}</span>
+          <span v-if="selectedCategory" class="font-medium">· {{ categoryDisplayName(selectedCategory, t) }}</span>
         </span>
         <button type="button" class="clay-button-ghost text-xs text-clay-primary flex items-center gap-1 p-1" @click="toggleAdvanced">
           {{ t('transactions.addEffect') }}
@@ -272,7 +290,18 @@ const categoryOptions = computed(() =>
               { value: 'credit', label: t('transactions.credit') },
             ]"
           />
-          <ClayInput v-model.number="effect.amount" type="number" step="0.01" :label="t('common.amount')" />
+          <div class="flex gap-1 items-end">
+            <div class="flex-1">
+              <ClayInput v-model.number="effect.amount" type="number" step="0.01" :label="t('common.amount')" />
+            </div>
+            <button
+              type="button"
+              class="clay-button-ghost w-8 h-8 rounded-clay-sm flex items-center justify-center mb-0.5 shrink-0"
+              @click="showCalculator = true; calculatorTarget = effect.localId"
+            >
+              <Calculator class="w-4 h-4 text-clay-muted" />
+            </button>
+          </div>
         </div>
 
         <ClaySelect
@@ -283,6 +312,26 @@ const categoryOptions = computed(() =>
         />
       </div>
     </div>
+
+    <ClayCalculator
+      :show="showCalculator"
+      :initial-value="calculatorTarget === 'main' ? amount : (effects.find((e: any) => e.localId === calculatorTarget)?.amount ?? 0)"
+      @close="showCalculator = false; calculatorTarget = 'main'"
+      @apply="(val: number) => {
+        if (calculatorTarget === 'main') {
+          amount = val
+        } else {
+          const found = effects.find((e: EffectRow) => e.localId === calculatorTarget)
+          if (found) found.amount = val
+        }
+        showCalculator = false
+        calculatorTarget = 'main'
+      }"
+    />
+
+    <p v-if="validationError" class="text-sm text-clay-expense bg-rose-50 rounded-clay-sm px-4 py-3 text-center">
+      {{ validationError }}
+    </p>
 
     <div class="flex gap-3 pt-2">
       <ClayButton variant="secondary" type="button" @click="emit('cancel')">

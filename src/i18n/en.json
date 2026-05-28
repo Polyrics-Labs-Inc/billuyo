@@ -124,6 +124,8 @@
     "noBudgets": "No budgets yet",
     "obligationCompleted": "Completed",
     "noObligations": "No obligations for this period",
+    "undoComplete": "Undo completion",
+    "undoCompleteDesc": "This will remove the transaction and unmark this obligation.",
     "summary": "Summary",
     "totalIncome": "Total Income",
     "totalExpenses": "Total Expenses",
@@ -152,7 +154,21 @@
     "defaultDirection": "Default direction",
     "noCategories": "No categories yet",
     "receivesMoney": "Receives money (credit)",
-    "sendsMoney": "Spends money (debit)"
+    "sendsMoney": "Spends money (debit)",
+    "default": {
+      "salary": "Salary",
+      "freelance": "Freelance",
+      "food": "Food",
+      "transport": "Transport",
+      "shopping": "Shopping",
+      "bills": "Bills",
+      "entertainment": "Entertainment",
+      "health": "Health",
+      "transfer": "Transfer",
+      "savings": "Savings",
+      "income": "Income",
+      "expense": "Expense"
+    }
   },
   "settings": {
     "title": "Settings",
@@ -170,6 +186,10 @@
     "clearData": "Clear All Data",
     "clearConfirm": "This will delete ALL your data. Are you sure?",
     "dataCleared": "All data has been cleared."
+  },
+  "calculator": {
+    "use": "Use",
+    "error": "Error"
   },
   "frequency": {
     "days": "Day(s)",

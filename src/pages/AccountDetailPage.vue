@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useAccountsStore } from '@/stores/accounts'
@@ -8,6 +8,7 @@ import { useAppStore } from '@/stores/app'
 import { formatCurrency } from '@/utils/currency'
 import ClayCard from '@/components/ui/ClayCard.vue'
 import ClayButton from '@/components/ui/ClayButton.vue'
+import ClayConfirmDialog from '@/components/ui/ClayConfirmDialog.vue'
 import TopBar from '@/components/layout/TopBar.vue'
 import TransactionCard from '@/components/transactions/TransactionCard.vue'
 import { Trash2, Wallet, Pencil } from 'lucide-vue-next'
@@ -21,6 +22,8 @@ const appStore = useAppStore()
 
 const id = route.params.id as string
 const account = computed(() => accountsStore.getById(id))
+const showDeleteConfirm = ref(false)
+const showDeleteWarning = ref(false)
 
 onMounted(async () => {
   await Promise.all([
@@ -46,12 +49,15 @@ const accountTransactions = computed(() =>
   transactionsStore.sorted.filter(t => t.effects.some(e => e.accountId === id))
 )
 
-async function handleDelete() {
+function promptDelete() {
   if (accountTransactions.value.length > 0) {
-    alert(t('accounts.deleteWarning'))
+    showDeleteWarning.value = true
     return
   }
-  if (!confirm(t('common.confirmDelete'))) return
+  showDeleteConfirm.value = true
+}
+
+async function confirmDelete() {
   await accountsStore.remove(id)
   router.push('/accounts')
 }
@@ -97,10 +103,28 @@ async function handleDelete() {
         <ClayButton variant="secondary" class="flex-1" @click="router.push(`/accounts/${id}/edit`)">
           <Pencil class="w-4 h-4" /> {{ t('common.edit') }}
         </ClayButton>
-        <ClayButton variant="danger" class="flex-1" @click="handleDelete">
+        <ClayButton variant="danger" class="flex-1" @click="promptDelete">
           <Trash2 class="w-4 h-4" /> {{ t('common.delete') }}
         </ClayButton>
       </div>
     </div>
+
+    <ClayConfirmDialog
+      :show="showDeleteWarning"
+      :title="t('accounts.deleteWarning')"
+      :message="t('accounts.deleteWarning')"
+      :hide-confirm="true"
+      cancel-label="OK"
+      @cancel="showDeleteWarning = false"
+    />
+
+    <ClayConfirmDialog
+      :show="showDeleteConfirm"
+      :title="t('common.delete')"
+      :message="t('common.confirmDelete')"
+      variant="danger"
+      @confirm="confirmDelete()"
+      @cancel="showDeleteConfirm = false"
+    />
   </div>
 </template>

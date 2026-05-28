@@ -47,6 +47,11 @@ export const useObligationsStore = defineStore('obligations', () => {
     return item
   }
 
+  async function updateAction(id: string, data: Partial<ObligationAction>) {
+    actions.value = actions.value.map(a => a.id === id ? { ...a, ...data } : a)
+    await actionRepo.update(id, { ...data, id } as ObligationAction)
+  }
+
   async function removeAction(id: string) {
     actions.value = actions.value.filter(a => a.id !== id)
     await actionRepo.delete(id)
@@ -92,7 +97,7 @@ export const useObligationsStore = defineStore('obligations', () => {
     actions,
     load,
     createObligation, updateObligation, removeObligation, getObligationById,
-    createAction, removeAction, clearActions,
+    createAction, updateAction, removeAction, clearActions,
     getObligationsForPeriod, getActionForObligationInPeriod, getActionsForPeriod,
     setAllData,
   }

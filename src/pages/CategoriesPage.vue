@@ -3,6 +3,7 @@ import { ref, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useCategoriesStore } from '@/stores/categories'
 import { useAppStore } from '@/stores/app'
+import ClayConfirmDialog from '@/components/ui/ClayConfirmDialog.vue'
 import ClayCard from '@/components/ui/ClayCard.vue'
 import ClayButton from '@/components/ui/ClayButton.vue'
 import ClayInput from '@/components/ui/ClayInput.vue'
@@ -11,6 +12,7 @@ import ClayModal from '@/components/ui/ClayModal.vue'
 import ClayEmptyState from '@/components/ui/ClayEmptyState.vue'
 import TopBar from '@/components/layout/TopBar.vue'
 import { Plus, Edit2, Trash2, ChevronRight } from 'lucide-vue-next'
+import { categoryDisplayName } from '@/utils/category'
 import type { Category, Direction } from '@/types'
 
 const { t } = useI18n()
@@ -48,6 +50,8 @@ function openCreate() {
   showModal.value = true
 }
 
+const deleteTarget = ref<string | null>(null)
+
 function openEdit(cat: Category) {
   editingId.value = cat.id
   formName.value = cat.name
@@ -57,11 +61,18 @@ function openEdit(cat: Category) {
   showModal.value = true
 }
 
+async function confirmDelete() {
+  if (!deleteTarget.value) return
+  await categoriesStore.remove(deleteTarget.value)
+  deleteTarget.value = null
+}
+
 async function handleSave() {
   if (!formName.value.trim()) return
   if (editingId.value) {
     await categoriesStore.update(editingId.value, {
       name: formName.value.trim(),
+      nameKey: undefined,
       icon: formIcon.value,
       defaultDirection: formDirection.value,
       color: formColor.value,
@@ -78,9 +89,8 @@ async function handleSave() {
   showModal.value = false
 }
 
-async function handleDelete(id: string) {
-  if (!confirm(t('common.confirmDelete'))) return
-  await categoriesStore.remove(id)
+function promptDelete(id: string) {
+  deleteTarget.value = id
 }
 </script>
 
@@ -107,7 +117,7 @@ async function handleDelete(id: string) {
             <span class="text-lg" :style="{ color: cat.color }">●</span>
           </div>
           <div class="flex-1">
-            <p class="text-sm font-medium text-clay-ink">{{ cat.name }}</p>
+            <p class="text-sm font-medium text-clay-ink">{{ categoryDisplayName(cat, t) }}</p>
             <p class="text-xs text-clay-muted">
               {{ cat.defaultDirection === 'credit' ? t('categories.receivesMoney') : t('categories.sendsMoney') }}
             </p>
@@ -116,13 +126,22 @@ async function handleDelete(id: string) {
             <button class="clay-button-ghost p-1.5" @click="openEdit(cat)">
               <Edit2 class="w-4 h-4 text-clay-muted" />
             </button>
-            <button class="clay-button-ghost p-1.5" @click="handleDelete(cat.id)">
+            <button class="clay-button-ghost p-1.5" @click="promptDelete(cat.id)">
               <Trash2 class="w-4 h-4 text-clay-expense" />
             </button>
           </div>
         </div>
       </ClayCard>
     </div>
+
+    <ClayConfirmDialog
+      :show="!!deleteTarget"
+      :title="t('common.delete')"
+      :message="t('common.confirmDelete')"
+      variant="danger"
+      @confirm="confirmDelete()"
+      @cancel="deleteTarget = null"
+    />
 
     <ClayModal :show="showModal" :title="editingId ? t('categories.editCategory') : t('categories.newCategory')" @close="showModal = false">
       <div class="flex flex-col gap-4">

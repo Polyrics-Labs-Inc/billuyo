@@ -15,6 +15,7 @@ export interface Frequency {
 export interface Category {
   id: string
   name: string
+  nameKey?: string
   icon: string
   defaultDirection: Direction
   color: string
