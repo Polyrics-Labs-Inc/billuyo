@@ -1,8 +1,158 @@
 @import './claymorphism.css';
 
+@font-face {
+  font-family: 'ElmsSans';
+  src: url('/fonts/mpid18pd-ElmsSans-Thin.ttf') format('truetype');
+  font-weight: 100;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'ElmsSans';
+  src: url('/fonts/mpid18pf-ElmsSans-ThinItalic.ttf') format('truetype');
+  font-weight: 100;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'ElmsSans';
+  src: url('/fonts/mpid18n9-ElmsSans-ExtraLight.ttf') format('truetype');
+  font-weight: 200;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'ElmsSans';
+  src: url('/fonts/mpid18ng-ElmsSans-ExtraLightItalic.ttf') format('truetype');
+  font-weight: 200;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'ElmsSans';
+  src: url('/fonts/mpid18nk-ElmsSans-Light.ttf') format('truetype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'ElmsSans';
+  src: url('/fonts/mpid18no-ElmsSans-LightItalic.ttf') format('truetype');
+  font-weight: 300;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'ElmsSans';
+  src: url('/fonts/mpid18p4-ElmsSans-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'ElmsSans';
+  src: url('/fonts/mpid18nk-ElmsSans-Italic.ttf') format('truetype');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'ElmsSans';
+  src: url('/fonts/mpid18np-ElmsSans-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'ElmsSans';
+  src: url('/fonts/mpid18p3-ElmsSans-MediumItalic.ttf') format('truetype');
+  font-weight: 500;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'ElmsSans';
+  src: url('/fonts/mpid18p8-ElmsSans-SemiBold.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'ElmsSans';
+  src: url('/fonts/mpid18p9-ElmsSans-SemiBoldItalic.ttf') format('truetype');
+  font-weight: 600;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'ElmsSans';
+  src: url('/fonts/mpid18mx-ElmsSans-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'ElmsSans';
+  src: url('/fonts/mpid18mz-ElmsSans-BoldItalic.ttf') format('truetype');
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'ElmsSans';
+  src: url('/fonts/mpid18n4-ElmsSans-ExtraBold.ttf') format('truetype');
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'ElmsSans';
+  src: url('/fonts/mpid18n9-ElmsSans-ExtraBoldItalic.ttf') format('truetype');
+  font-weight: 800;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'ElmsSans';
+  src: url('/fonts/mpid18mi-ElmsSans-Black.ttf') format('truetype');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'ElmsSans';
+  src: url('/fonts/mpid18ml-ElmsSans-BlackItalic.ttf') format('truetype');
+  font-weight: 900;
+  font-style: italic;
+  font-display: swap;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  html {
+    font-family: 'ElmsSans', system-ui, sans-serif;
+  }
+}
 
 html {
   -webkit-tap-highlight-color: transparent;

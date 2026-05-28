@@ -3,6 +3,9 @@ export default {
   content: ['./index.html', './src/**/*.{vue,ts,tsx}'],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ['ElmsSans', 'system-ui', 'sans-serif'],
+      },
       colors: {
         clay: {
           bg: '#FFF7ED',
