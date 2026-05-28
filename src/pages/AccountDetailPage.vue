@@ -10,7 +10,7 @@ import ClayCard from '@/components/ui/ClayCard.vue'
 import ClayButton from '@/components/ui/ClayButton.vue'
 import TopBar from '@/components/layout/TopBar.vue'
 import TransactionCard from '@/components/transactions/TransactionCard.vue'
-import { Trash2, Wallet } from 'lucide-vue-next'
+import { Trash2, Wallet, Pencil } from 'lucide-vue-next'
 
 const { t } = useI18n()
 const router = useRouter()
@@ -93,9 +93,14 @@ async function handleDelete() {
         </div>
       </div>
 
-      <ClayButton variant="danger" class="w-full" @click="handleDelete">
-        <Trash2 class="w-4 h-4" /> {{ t('common.delete') }}
-      </ClayButton>
+      <div class="flex gap-3">
+        <ClayButton variant="secondary" class="flex-1" @click="router.push(`/accounts/${id}/edit`)">
+          <Pencil class="w-4 h-4" /> {{ t('common.edit') }}
+        </ClayButton>
+        <ClayButton variant="danger" class="flex-1" @click="handleDelete">
+          <Trash2 class="w-4 h-4" /> {{ t('common.delete') }}
+        </ClayButton>
+      </div>
     </div>
   </div>
 </template>

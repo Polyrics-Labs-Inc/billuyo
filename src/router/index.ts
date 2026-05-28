@@ -20,6 +20,7 @@ const routes: RouteRecordRaw[] = [
       { path: 'accounts', name: 'accounts', component: () => import('@/pages/AccountsPage.vue') },
       { path: 'accounts/new', name: 'account-new', component: () => import('@/pages/AccountNewPage.vue') },
       { path: 'accounts/:id', name: 'account-detail', component: () => import('@/pages/AccountDetailPage.vue') },
+      { path: 'accounts/:id/edit', name: 'account-edit', component: () => import('@/pages/AccountEditPage.vue') },
       { path: 'budgets', name: 'budgets', component: () => import('@/pages/BudgetsPage.vue') },
       { path: 'budgets/new', name: 'budget-new', component: () => import('@/pages/BudgetNewPage.vue') },
       { path: 'budgets/:id', name: 'budget-detail', component: () => import('@/pages/BudgetDetailPage.vue') },
